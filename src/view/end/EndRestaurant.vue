@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue"
-import { getFrontRestaurantApi } from "@/api/front_restaurant"
+import { getEndRestaurantApi } from "@/api/end_restaurant"
 
 const data = ref<string>('')
 
 onMounted(async () => {
-  const res = await getFrontRestaurantApi()
+  const res = await getEndRestaurantApi()
 
   data.value = res.data
   console.log(data.value)

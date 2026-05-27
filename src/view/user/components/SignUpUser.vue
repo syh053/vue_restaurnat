@@ -3,6 +3,10 @@ import { reactive, ref } from "vue"
 import { postUserApi } from "@/api/user"
 import type { FormInstance, FormRules } from "element-plus"
 import type { UserPost } from "@/api/user/tpye.ts"
+import { useRouter } from "vue-router"
+
+
+const router = useRouter()
 
 /* 表單相關 */
 const checkPassword = (_rule: any, value: any, cb: any) => {
@@ -34,6 +38,7 @@ const rules = reactive<FormRules<UserPost>>({
   ],
 })
 
+/* 註冊 */
 const onSubmit = async (formEl: FormInstance | undefined) => {
   if (!formEl) return
 
@@ -44,6 +49,11 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
       console.log('錯誤的驗證!', fields)
     }
   })
+}
+
+/* 登入 */
+const jumpSignIn = async () => {
+  await router.push({ name: "logIn" })
 }
 </script>
 
@@ -77,9 +87,9 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
       </el-form-item>
 
       <el-form-item>
-        <div class="w-full text-right">
-          <el-button type="primary" @click="onSubmit(ruleFormRef)">Create</el-button>
-          <el-button>Cancel</el-button>
+        <div class="flex gap-5 justify-end w-full text-right">
+          <el-button type="primary" @click="onSubmit(ruleFormRef)">建立</el-button>
+          <el-link type="primary" @click="jumpSignIn">登入頁面</el-link>
         </div>
       </el-form-item>
     </el-form>

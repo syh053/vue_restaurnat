@@ -1,39 +1,43 @@
 <script setup lang="ts">
-import { Avatar, Plus } from "@element-plus/icons-vue"
+import { ref } from 'vue'
+import { userLogOutApi } from "@/api/user"
+import { useRouter } from "vue-router"
+
+const router = useRouter()
+
+/* header */
+const activeIndex = ref('1')
+const handleSelect = (key: string, keyPath: string[]) => {
+  console.log(key, keyPath)
+}
+
+const logOut = async () => {
+  await userLogOutApi()
+  await router.push({name: 'logIn'})
+}
 </script>
 
 <template>
-  <div
-      class="bg-[url(https://hips.hearstapps.com/hmg-prod/images/486cec61-814b-4c76-a41c-f19efa80a688-686e5b6b1ccb5.jpg)] bg-cover bg-center aspect-video w-[65%] mx-auto" />
-
-  <div class="flex gap-10 justify-center mx-auto w-[50%] mt-5">
-    <el-button plain>
-      <router-link class="link-lg" :to="{name: 'logIn'}">
-        登入
-        <el-icon>
-          <Avatar />
-        </el-icon>
-      </router-link>
-    </el-button>
-
-    <el-button plain>
-      <router-link class="link-lg" :to="{name: 'signUp'}">
-        註冊
-        <el-icon class="el-icon--right">
-          <Plus />
-        </el-icon>
-      </router-link>
-    </el-button>
+  <div class="fixed top-0 left-0 right-0 h-(--header-height) z-9999">
+    <el-menu
+        :default-active="activeIndex"
+        class="el-menu-demo flex justify-end"
+        mode="horizontal"
+        @select="handleSelect"
+    >
+      <el-menu-item index="1">
+        <router-link :to="{ name: 'logIn' }">登入</router-link>
+      </el-menu-item>
+      <el-menu-item index="2" @click="logOut">
+        登出
+      </el-menu-item>
+    </el-menu>
   </div>
 
   <router-view />
-
 </template>
 
 
 <style scoped>
-.link-lg {
-  font-size: 18px;
-  line-height: 1.5;
-}
+
 </style>

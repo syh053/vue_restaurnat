@@ -1,8 +1,13 @@
 <script setup lang="ts">
 import { reactive, ref } from "vue"
-import { getUserApi } from "@/api/user"
+import { userLogInApi } from "@/api/user"
 import type { FormInstance, FormRules } from "element-plus"
 import type { UserLogIn } from "@/api/user/tpye.ts"
+import { useRouter } from "vue-router"
+
+
+const router = useRouter()
+
 
 /* 表單相關 */
 const form = reactive<UserLogIn>({
@@ -17,15 +22,24 @@ const rules = reactive<FormRules<UserLogIn>>({
   password: [{required: true, message: "請輸入密碼", trigger: "change"}],
 })
 
+/* 登入 */
 const onSubmit = async (formEl: FormInstance | undefined) => {
   if (!formEl) return
   await formEl.validate(async (valid, fields) => {
     if (valid) {
-      await getUserApi(form)
+      const res = await userLogInApi(form)
+      if (res.status === 200) {
+        await router.push({ name: "frontRestaurant" })
+      }
     } else {
       console.log('錯誤的使用者名稱或密碼', fields)
     }
   })
+}
+
+/* 跳轉到註冊頁 */
+const jumpSignUp = async () => {
+  await router.push({ name: "signUp" })
 }
 </script>
 
@@ -51,9 +65,9 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
       </el-form-item>
 
       <el-form-item>
-        <div class="w-full text-right">
-          <el-button type="primary" @click="onSubmit(ruleFormRef)">Create</el-button>
-          <el-button>Cancel</el-button>
+        <div class="flex gap-5 justify-end w-full text-right">
+          <el-button type="primary" @click="onSubmit(ruleFormRef)">登入</el-button>
+          <el-link type="primary" @click="jumpSignUp">註冊頁面</el-link>
         </div>
       </el-form-item>
     </el-form>
