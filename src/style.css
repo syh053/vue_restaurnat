@@ -18,7 +18,7 @@
     --mono: ui-monospace, Consolas, monospace;
 
     --header-height: 64px;
-    --start-space: 84px;
+    --start-space: 20px;
 
     font: 18px/145% var(--sans);
     letter-spacing: 0.18px;
