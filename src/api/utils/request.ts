@@ -1,6 +1,7 @@
 import axios from 'axios'
 
 export const request = axios.create({
-    baseURL: '/api/front',   // 對應 proxy 的前綴
+    baseURL: 'http://localhost:8888',
+    withCredentials: true,
     timeout: 5000
 })

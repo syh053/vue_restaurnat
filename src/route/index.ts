@@ -30,7 +30,19 @@ const routes: RouteRecordRaw[] = [
     {
         path: '/end/restaurant',
         name: 'endRestaurant',
-        component: () => import('@/view/end/EndRestaurant.vue')
+        component: () => import('@/view/end/EndRestaurant.vue'),
+        children: [
+            {
+                path: 'all',
+                name: 'endRestaurantAll',
+                component: () => import('@/view/end/EndRestaurantAll.vue')
+            },
+            {
+                path: 'add',
+                name: 'endRestaurantAdd',
+                component: () => import('@/view/end/EndRestaurantAdd.vue')
+            }
+        ]
     },
 ]
 

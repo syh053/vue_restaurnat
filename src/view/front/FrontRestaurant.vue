@@ -8,12 +8,28 @@ onMounted(async () => {
   const res = await getFrontRestaurantApi()
 
   data.value = res.data
-  console.log(data.value)
 })
 </script>
 
 <template>
-  <p class="pt-20">{{ data }}</p>
+  <el-container class="layout-container-demo h-screen">
+    <el-aside class="border-r border-gray-200" width="200px">
+      <el-menu>
+        <el-menu-item class="justify-center" index="1" @click="handleToRestaurantList">
+          餐廳列表
+        </el-menu-item>
+        <el-menu-item class="justify-center" index="2" @click="handleToRestaurantAdd">
+          新增餐廳
+        </el-menu-item>
+      </el-menu>
+    </el-aside>
+    <el-main>
+      <div>
+        <p>{{ data }}</p>
+        <p>123456</p>
+      </div>
+    </el-main>
+  </el-container>
 </template>
 
 <style scoped>
