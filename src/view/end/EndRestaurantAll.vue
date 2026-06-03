@@ -1,12 +1,67 @@
 <script setup lang="ts">
-import { onMounted, reactive, ref } from 'vue'
+import { onMounted, onUnmounted, reactive, ref } from 'vue'
 import { getEndRestaurantApi } from "@/api/end_restaurant"
 import { useRouter } from "vue-router"
 import { type ComponentSize, ElMessageBox } from "element-plus"
 import type { EndRestaurantList, EndRestaurantSearch } from "@/api/end_restaurant/type.ts"
+import EndRestaurantCRUD from "@/view/end/EndRestaurantCRUD.vue"
+
 
 /* 導航 */
 const router = useRouter()
+
+/* Dialog */
+const showDialog = ref<boolean>(false)
+const showTitle = ref<string>('')
+
+/* 右鍵選單 */
+const showMenu = ref<boolean>(false)
+const menuPos = reactive({x: 0, y: 0})
+const rowData = ref<EndRestaurantList>({
+  id: '',
+  name: '',
+  tel: '',
+  openingHours: null,
+  address: '',
+  description: '',
+})
+
+const handleRightClick = (row: any, _column: any, _cell: any, event: PointerEvent) => {
+  rowData.value = {
+    id: row?.id ?? '',
+    name: row?.name ?? '',
+    tel: row?.tel ?? '',
+    openingHours: row?.openingHours ?? null,
+    address: row?.address ?? '',
+    description: row?.description ?? '',
+  }
+
+  event.preventDefault()
+  event.stopPropagation()
+
+  menuPos.x = event.clientX
+  menuPos.y = event.clientY
+
+  showMenu.value = true
+}
+
+const closeMenu = () => {
+  showMenu.value = false
+}
+
+// 監聽滑鼠左鍵點擊，點擊任何地方就隱藏選單
+onMounted(() => {
+  window.addEventListener('click', closeMenu)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('click', closeMenu)
+})
+
+const handleView = () => {
+  showDialog.value = true
+  showTitle.value = '查看餐廳'
+}
 
 /* 查詢 */
 const formInline = reactive<EndRestaurantSearch>({
@@ -92,13 +147,11 @@ onMounted(async () => {
         </el-form>
       </div>
 
-      <el-table :data="tableData">
-        <el-table-column type="index" width="70" align="center" />
-        <el-table-column prop="name" label="名稱" width="320" />
-        <el-table-column prop="tel" label="電話" width="180" />
-        <el-table-column prop="openingHours" label="開店時間" sortable width="120" />
-        <el-table-column prop="address" label="地址" width="300" />
-        <el-table-column prop="description" label="備註" />
+      <el-table :data="tableData" @cell-contextmenu="handleRightClick" style="width: 100%">
+        <el-table-column type="index" width="90" align="center" />
+        <el-table-column prop="name" label="名稱" width="480" />
+        <el-table-column prop="tel" label="電話" width="280" />
+        <el-table-column prop="address" label="地址" />
       </el-table>
     </div>
 
@@ -114,6 +167,25 @@ onMounted(async () => {
           @current-change="handleCurrentChange"
       />
     </div>
+
+    <EndRestaurantCRUD
+        v-if="showDialog"
+        v-model="showDialog"
+        :show-title="showTitle"
+        :form-data="rowData"
+        disabled
+    />
+  </div>
+
+  <div class="context-menu" v-if="showMenu" v-show="showMenu"
+       :style="{ left: menuPos.x + 'px', top: menuPos.y + 'px' }">
+    <ul>
+      <li @click="handleView">查看</li>
+      <el-divider style="margin: 4px 0" />
+      <li @click="">編輯</li>
+      <el-divider style="margin: 4px 0" />
+      <li @click="">刪除</li>
+    </ul>
   </div>
 </template>
 
@@ -122,5 +194,28 @@ onMounted(async () => {
   * {
     margin: 0;
   }
+}
+
+.context-menu {
+  position: fixed;
+  z-index: 3000;
+  background-color: white;
+  border: 1px solid #e4e7ed;
+  border-radius: 15px;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  padding: 5px 0;
+  min-width: 120px;
+}
+
+.context-menu li {
+  padding: 8px 16px;
+  font-size: 14px;
+  color: #4A4AFF;
+  cursor: pointer;
+}
+
+.context-menu li:hover {
+  background-color: #f5f7fa;
+  color: #409eff;
 }
 </style>

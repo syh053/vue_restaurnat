@@ -40,7 +40,7 @@ const routes: RouteRecordRaw[] = [
             {
                 path: 'add',
                 name: 'endRestaurantAdd',
-                component: () => import('@/view/end/EndRestaurantAdd.vue')
+                component: () => import('@/view/end/EndRestaurantCRUD.vue')
             }
         ]
     },

@@ -1,7 +1,7 @@
 import { request } from "@/api/utils/request.ts"
-import type { EndRestaurantList } from "@/api/end_restaurant/type.ts"
+import type { EndRestaurantSearch } from "@/api/end_restaurant/type.ts"
 
 
-export const getEndRestaurantApi = async (params: EndRestaurantList) => {
+export const getEndRestaurantApi = async (params: EndRestaurantSearch) => {
     return request.get("/end/restaurant/all", {params})
 }

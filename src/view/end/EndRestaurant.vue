@@ -2,6 +2,8 @@
 import { useRouter } from "vue-router"
 import { useRoute } from 'vue-router'
 import { Icon } from '@iconify/vue'
+import { ref } from "vue"
+import EndRestaurantCrud from "@/view/end/EndRestaurantCRUD.vue"
 
 /* 導航 */
 const router = useRouter()
@@ -16,9 +18,16 @@ const handleToRestaurantList = async () => {
   await router.push({name: 'endRestaurantAll'})
 }
 
+/* 新增餐廳 */
+const showDialog = ref<boolean>(false)
+const dialogTitle = ref<string>('')
+
 const handleToRestaurantAdd = async () => {
-  await router.push({name: 'endRestaurantAdd'})
+  dialogTitle.value = '新增餐廳'
+  showDialog.value = true
 }
+
+
 </script>
 
 <template>
@@ -41,6 +50,13 @@ const handleToRestaurantAdd = async () => {
       </div>
     </el-main>
   </el-container>
+
+
+  <EndRestaurantCrud
+      v-if="showDialog"
+      v-model="showDialog"
+      :show-title="dialogTitle"
+  />
 </template>
 
 <style scoped>
