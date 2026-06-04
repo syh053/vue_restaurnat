@@ -16,6 +16,7 @@ const showTitle = ref<string>('')
 
 /* 右鍵選單 */
 const showMenu = ref<boolean>(false)
+const editType = ref<boolean>(false)
 const menuPos = reactive({x: 0, y: 0})
 const rowData = ref<EndRestaurantList>({
   id: '',
@@ -54,6 +55,7 @@ onMounted(() => {
   window.addEventListener('click', closeMenu)
 })
 
+// 組件銷毀時移除監聽
 onUnmounted(() => {
   window.removeEventListener('click', closeMenu)
 })
@@ -61,6 +63,13 @@ onUnmounted(() => {
 const handleView = () => {
   showDialog.value = true
   showTitle.value = '查看餐廳'
+  editType.value = true
+}
+
+const handleUpdate = () => {
+  showDialog.value = true
+  showTitle.value = '編輯餐廳'
+  editType.value = false
 }
 
 /* 查詢 */
@@ -118,6 +127,13 @@ onMounted(async () => {
     await router.push({name: 'frontRestaurant'})
   }
 })
+
+const updatedData = async () => {
+  const res = await getEndRestaurantApi(formInline)
+  tableData.value = res.data[0]
+  total.value = res.data[1]
+  showDialog.value = false
+}
 </script>
 
 <template>
@@ -153,19 +169,19 @@ onMounted(async () => {
         <el-table-column prop="tel" label="電話" width="280" />
         <el-table-column prop="address" label="地址" />
       </el-table>
-    </div>
 
-    <div class="demo-pagination-block flex justify-end">
-      <el-pagination
-          v-model:current-page="currentPage"
-          v-model:page-size="pageSize"
-          :page-sizes="[5, 10, 20, 30]"
-          :size="size"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="total"
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-      />
+      <div class="demo-pagination-block flex justify-end border-t py-3">
+        <el-pagination
+            v-model:current-page="currentPage"
+            v-model:page-size="pageSize"
+            :page-sizes="[5, 10, 20, 30]"
+            :size="size"
+            layout="total, sizes, prev, pager, next, jumper"
+            :total="total"
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+        />
+      </div>
     </div>
 
     <EndRestaurantCRUD
@@ -173,7 +189,8 @@ onMounted(async () => {
         v-model="showDialog"
         :show-title="showTitle"
         :form-data="rowData"
-        disabled
+        :disabled="editType"
+        @update="updatedData"
     />
   </div>
 
@@ -182,7 +199,7 @@ onMounted(async () => {
     <ul>
       <li @click="handleView">查看</li>
       <el-divider style="margin: 4px 0" />
-      <li @click="">編輯</li>
+      <li @click="handleUpdate">編輯</li>
       <el-divider style="margin: 4px 0" />
       <li @click="">刪除</li>
     </ul>

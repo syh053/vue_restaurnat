@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { useRouter } from "vue-router"
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from "vue-router"
 import { Icon } from '@iconify/vue'
 import { ref } from "vue"
 import EndRestaurantCrud from "@/view/end/EndRestaurantCRUD.vue"
@@ -25,6 +24,10 @@ const dialogTitle = ref<string>('')
 const handleToRestaurantAdd = async () => {
   dialogTitle.value = '新增餐廳'
   showDialog.value = true
+}
+
+const updatedData = async () => {
+  showDialog.value = false
 }
 
 
@@ -56,6 +59,7 @@ const handleToRestaurantAdd = async () => {
       v-if="showDialog"
       v-model="showDialog"
       :show-title="dialogTitle"
+      @update="updatedData"
   />
 </template>
 
