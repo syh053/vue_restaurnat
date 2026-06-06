@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue"
 import { getFrontRestaurantApi } from "@/api/front_restaurant"
+import Aside from "@/view/front/components/Aside.vue"
 
 const data = ref<string>('')
 
@@ -12,18 +13,20 @@ onMounted(async () => {
 </script>
 
 <template>
-  <el-container class="layout-container-demo h-screen">
-    <el-aside class="border-r border-gray-200" width="200px">
-      <el-menu>
-        <el-menu-item class="justify-center" index="1" @click="handleToRestaurantList">
-          餐廳列表
-        </el-menu-item>
-        <el-menu-item class="justify-center" index="2" @click="handleToRestaurantAdd">
-          新增餐廳
-        </el-menu-item>
-      </el-menu>
-    </el-aside>
-    <el-main>
+  <el-container>
+    <Aside>
+      <template #default>
+        <el-menu>
+          <el-menu-item class="justify-center" index="1" @click="">
+            餐廳列表
+          </el-menu-item>
+          <el-menu-item class="justify-center" index="2" @click="">
+            新增餐廳
+          </el-menu-item>
+        </el-menu>
+      </template>
+    </Aside>
+    <el-main class="h-screen w-full">
       <div>
         <p>{{ data }}</p>
         <p>123456</p>

@@ -35,12 +35,12 @@ const routes: RouteRecordRaw[] = [
             {
                 path: 'all',
                 name: 'endRestaurantAll',
-                component: () => import('@/view/end/EndRestaurantAll.vue')
+                component: () => import('@/view/end/components/EndRestaurantAll.vue')
             },
             {
                 path: 'add',
                 name: 'endRestaurantAdd',
-                component: () => import('@/view/end/EndRestaurantCRUD.vue')
+                component: () => import('@/view/end/components/EndRestaurantCRUD.vue')
             }
         ]
     },

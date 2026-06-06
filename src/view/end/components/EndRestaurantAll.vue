@@ -4,7 +4,7 @@ import { getEndRestaurantApi } from "@/api/end_restaurant"
 import { useRouter } from "vue-router"
 import { type ComponentSize, ElMessageBox } from "element-plus"
 import type { EndRestaurantList, EndRestaurantSearch } from "@/api/end_restaurant/type.ts"
-import EndRestaurantCRUD from "@/view/end/EndRestaurantCRUD.vue"
+import EndRestaurantCRUD from "@/view/end/components/EndRestaurantCRUD.vue"
 
 
 /* 導航 */

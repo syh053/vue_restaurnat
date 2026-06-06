@@ -18,7 +18,7 @@
     --mono: ui-monospace, Consolas, monospace;
 
     --header-height: 64px;
-    --start-space: 20px;
+    --start-space: 5rem;
 
     font: 18px/145% var(--sans);
     letter-spacing: 0.18px;
@@ -56,6 +56,14 @@
 
 body {
     margin: 0;
+}
+
+.el-header {
+    padding: 0 !important;
+}
+
+.el-main {
+    padding-top: 60px !important;
 }
 
 h1,
@@ -169,7 +177,6 @@ code {
     min-height: 100svh;
     max-width: 100%;
     margin: 0 auto;
-    padding-top: 50px;
     text-align: center;
     border-inline: 1px solid var(--border);
     display: flex;
