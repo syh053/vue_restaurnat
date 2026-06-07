@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, reactive, ref } from 'vue'
-import { getEndRestaurantApi } from "@/api/end_restaurant"
+import { deleteEndRestaurantApi, getEndRestaurantApi } from "@/api/end_restaurant"
 import { useRouter } from "vue-router"
 import { type ComponentSize, ElMessageBox } from "element-plus"
 import type { EndRestaurantList, EndRestaurantSearch } from "@/api/end_restaurant/type.ts"
@@ -113,6 +113,7 @@ const handleCurrentChange = async (val: number) => {
 /* Table */
 const tableData = ref<EndRestaurantList[]>([])
 const showTable = ref<boolean>(false)
+const multipleSelection = ref<string[]>([])
 
 onMounted(async () => {
   try {
@@ -133,6 +134,19 @@ const updatedData = async () => {
   tableData.value = res.data[0]
   total.value = res.data[1]
   showDialog.value = false
+}
+
+const handleSelectionChange = (restaurantList: EndRestaurantList[]) => {
+  multipleSelection.value = restaurantList.map((restaurant: EndRestaurantList) => restaurant.name)
+  console.log('餐廳名稱列表 :', multipleSelection.value)
+  console.log(typeof tableData.value)
+}
+
+const handleDelete = async () => {
+  await deleteEndRestaurantApi(multipleSelection.value)
+  const res = await getEndRestaurantApi(formInline)
+  tableData.value = res.data[0]
+  total.value = res.data[1]
 }
 </script>
 
@@ -158,13 +172,22 @@ const updatedData = async () => {
             <el-input v-model="formInline.description" placeholder="模糊查詢" clearable />
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="onSubmit">查詢</el-button>
+            <div class="flex gap-2">
+              <el-button type="primary" @click="onSubmit">查詢</el-button>
+              <el-button type="danger" @click="handleDelete">刪除</el-button>
+            </div>
           </el-form-item>
         </el-form>
       </div>
 
-      <el-table :data="tableData" @cell-contextmenu="handleRightClick" style="width: 100%">
+      <el-table
+          :data="tableData"
+          @selection-change="handleSelectionChange"
+          @cell-contextmenu="handleRightClick"
+          style="width: 100%"
+      >
         <el-table-column type="index" width="90" align="center" />
+        <el-table-column type="selection" width="55" />
         <el-table-column prop="name" label="名稱" width="480" />
         <el-table-column prop="tel" label="電話" width="280" />
         <el-table-column prop="address" label="地址" />

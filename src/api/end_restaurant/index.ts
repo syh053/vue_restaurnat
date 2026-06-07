@@ -16,3 +16,9 @@ export const updateEndRestaurantApi = async (original_name: string, data: EndRes
         restaurant: data
     })
 }
+
+export const deleteEndRestaurantApi = async (name_list: string[]) => {
+   const params = new URLSearchParams()
+    name_list.forEach(name => params.append('name_list', name))
+    return request.delete("/end/restaurant", { params })
+}
