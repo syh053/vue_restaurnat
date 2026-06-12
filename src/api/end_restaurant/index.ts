@@ -11,9 +11,27 @@ export const postEndRestaurantApi = async (data: EndRestaurantAdd) => {
 }
 
 export const updateEndRestaurantApi = async (original_name: string, data: EndRestaurantAdd) => {
-    return request.put("/end/restaurant", {
-        original_name: original_name,
-        restaurant: data
+    const formData = new FormData()
+
+    // 1. 附加基本 Form 欄位
+    formData.append('original_name', original_name)
+    formData.append('name', data.name)
+    if (data.tel) formData.append('tel', data.tel)
+    if (data.openingHours !== null && data.openingHours !== undefined) {
+        formData.append('opening_hours', data.openingHours.toString())
+    }
+    formData.append('address', data.address)
+    if (data.description) formData.append('description', data.description)
+
+    // 2. 附加檔案欄位 (對應 FastAPI 的 photo)
+    if (data.image instanceof File) {
+        formData.append('image', data.image)
+    }
+
+    return request.put("/end/restaurant", formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
     })
 }
 

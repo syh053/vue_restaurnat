@@ -5,6 +5,7 @@ export interface EndRestaurantList {
     openingHours: number | null
     address: string
     description?: string
+    image?: string
 }
 
 export interface EndRestaurantSearch {
@@ -24,4 +25,5 @@ export interface EndRestaurantAdd {
     openingHours?: number | null
     address: string
     description?: string
+    image?: File | null
 }

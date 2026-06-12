@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { computed, reactive, ref, watch } from 'vue'
+import { computed, reactive, ref } from 'vue'
 import type { EndRestaurantList } from "@/api/end_restaurant/type.ts"
 import { postEndRestaurantApi, updateEndRestaurantApi } from "@/api/end_restaurant"
-import type { FormInstance, FormRules } from "element-plus"
+import { type FormInstance, type FormRules, type UploadFile } from "element-plus"
+import { Plus } from "@element-plus/icons-vue"
 
 /* Dialog */
 const showDialog = defineModel<boolean>({default: false})
@@ -23,8 +24,13 @@ const props = withDefaults(
         openingHours: null,
         address: '',
         description: '',
+        image: ''
       })
     }
+)
+
+const formType = computed(() =>
+    props.showTitle.includes('編輯') ? '編輯' : '建立'
 )
 
 /* Emits */
@@ -43,19 +49,49 @@ const updatedForm = ref<EndRestaurantList>({
   ...props.formData
 })
 
-watch(
-    () => props.formData,
-    (newVal) => {
-      if (newVal) {
-        updatedForm.value = JSON.parse(JSON.stringify(newVal)) // 或者使用結構賦值：{ ...newVal }
-      }
-    },
-    { immediate: true, deep: true } // immediate 確保一開始組件建立時就會執行一次
-)
+/* 圖片 */
+const rawFile = ref<File | null>(null)
 
-const formType = computed(() =>
-    props.showTitle.includes('編輯') ? '編輯' : '建立'
-)
+const displayImage = computed(() => {
+  const imgPath = updatedForm.value.image
+  if (!imgPath) {
+    // 預設圖片
+    return 'https://sansalife.tw/wp-content/uploads/2023/04/caesarmetro-restaurant-14_%E7%BB%93%E6%9E%9C-jpg.webp'
+  }
+  // 如果已經是剛選好的 Base64 或是滿版的 URL，就直接回傳
+  if (imgPath.startsWith('data:') || imgPath.startsWith('http')) {
+    return imgPath
+  }
+  // 如果是後端給的相對路徑，才幫它補上網域
+  return `http://localhost:8888${imgPath}`
+})
+
+const handleImageChange = (uploadFile: UploadFile) => {
+  if (!uploadFile.raw) return
+
+  // 限制圖片格式與大小
+  const isJPGorPNG = uploadFile.raw.type === 'image/jpeg' || uploadFile.raw.type === 'image/png'
+  const isLt10M = uploadFile.raw.size / 1024 / 1024 < 10
+
+  if (!isJPGorPNG) {
+    // ElMessage.error('圖片只能是 JPG 或 PNG 格式!')
+    return false
+  }
+  if (!isLt10M) {
+    // ElMessage.error('圖片大小不能超過 2MB!')
+    return false
+  }
+
+  // 儲存實體檔案，供送出 API 時使用
+  rawFile.value = uploadFile.raw
+
+  // 轉成 Base64 為了讓 displayImage 畫面可以即時預覽
+  const reader = new FileReader()
+  reader.readAsDataURL(uploadFile.raw)
+  reader.onload = () => {
+    updatedForm.value.image = reader.result as string
+  }
+}
 
 /* 按鈕 */
 const onSubmit = async (formEl: FormInstance | undefined) => {
@@ -63,13 +99,16 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
 
   await formEl.validate(async (valid) => {
     if (valid) {
+      const submitData = {
+        ...updatedForm.value,
+        image: rawFile.value // 將真正的 File 物件傳過去，如果沒換圖片就是 null
+      }
       if (props.showTitle.includes('新增')) {
-        console.log("準備建立...")
-        await postEndRestaurantApi(updatedForm.value)
+        await postEndRestaurantApi(submitData)
         emit('update')
 
       } else if (props.showTitle.includes('編輯')) {
-        await updateEndRestaurantApi(props.formData.name, updatedForm.value)
+        await updateEndRestaurantApi(props.formData.name, submitData)
         emit('update')
       }
 
@@ -86,6 +125,28 @@ const onCancel = () => {
 
 <template>
   <el-dialog v-model="showDialog" :title="props.showTitle" width="500" center>
+    <div class="mb-5 flex flex-col items-center">
+      <el-upload
+          class="avatar-uploader"
+          action="#"
+          :show-file-list="false"
+          :auto-upload="false"
+          :disabled="props.disabled"
+          :on-change="handleImageChange"
+      >
+        <img
+            v-if="displayImage"
+            :src="displayImage"
+            alt="餐廳圖片"
+            class="restaurant-img"
+            :class="{ 'cursor-pointer hover:opacity-80': !props.disabled }"
+            style="max-height: 350px;"
+        >
+        <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
+      </el-upload>
+      <small v-if="!props.disabled" class="text-gray-400 mt-2">點擊圖片可更換新照片</small>
+    </div>
+
     <el-form
         ref="ruleFormRef"
         :model="updatedForm"

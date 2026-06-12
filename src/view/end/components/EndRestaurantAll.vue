@@ -25,6 +25,7 @@ const rowData = ref<EndRestaurantList>({
   openingHours: null,
   address: '',
   description: '',
+  image: '',
 })
 
 const handleRightClick = (row: any, _column: any, _cell: any, event: PointerEvent) => {
@@ -35,6 +36,7 @@ const handleRightClick = (row: any, _column: any, _cell: any, event: PointerEven
     openingHours: row?.openingHours ?? null,
     address: row?.address ?? '',
     description: row?.description ?? '',
+    image: row?.image ?? '',
   }
 
   event.preventDefault()
@@ -119,6 +121,7 @@ onMounted(async () => {
   try {
     const res = await getEndRestaurantApi(formInline)
     tableData.value = res.data[0]
+    console.log("餐廳列表 :", tableData.value)
     total.value = res.data[1]
     showTable.value = true
   } catch (err) {
