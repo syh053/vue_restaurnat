@@ -2,10 +2,11 @@
 import { computed, onMounted, reactive, ref } from "vue"
 import Aside from "@/view/front/components/Aside.vue"
 import type { EndRestaurantList, EndRestaurantSearch } from "@/api/end_restaurant/type.ts"
-import { getEndRestaurantApi } from "@/api/end_restaurant"
+
 import { ElMessageBox } from "element-plus"
 import { useRouter } from "vue-router"
 import { Icon } from "@iconify/vue"
+import { getFrontRestaurantApi } from "@/api/front_restaurant"
 
 /* 導航 */
 const router = useRouter()
@@ -43,7 +44,7 @@ const loadData = async () => {
 
   loading.value = true
   try {
-    const res = await getEndRestaurantApi(formInline)
+    const res = await getFrontRestaurantApi(formInline)
     const newList = res.data[0] || []
     total.value = res.data[1] || 0
 
@@ -53,10 +54,10 @@ const loadData = async () => {
     // 成功載入後，將頁碼準備好給下一次呼叫
     formInline.current_page++
   } catch (err) {
-    await ElMessageBox.alert('無權限訪問後台', '提示', {
+    await ElMessageBox.alert('尚未登入無法查看餐廳', '提示', {
       confirmButtonText: '返回'
     })
-    await router.push({name: 'frontRestaurant'})
+    await router.push({name: 'logIn'})
   } finally {
     loading.value = false
   }
