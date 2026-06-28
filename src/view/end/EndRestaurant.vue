@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useRoute, useRouter } from "vue-router"
+import { useRouter } from "vue-router"
 import { Icon } from '@iconify/vue'
 import { ref } from "vue"
 import EndRestaurantCrud from "@/view/end/components/EndRestaurantCRUD.vue"
@@ -20,12 +20,6 @@ const handleToRestaurantAdd = async () => {
 }
 
 
-/* 讀取當前路由資訊 */
-const route = useRoute()
-console.log('current route:', route.fullPath)
-console.log('matched:', route.matched)
-
-
 /* 新增餐廳 */
 const showDialog = ref<boolean>(false)
 const dialogTitle = ref<string>('')
@@ -33,6 +27,7 @@ const dialogTitle = ref<string>('')
 
 const updatedData = async () => {
   showDialog.value = false
+  window.location.reload()
 }
 
 

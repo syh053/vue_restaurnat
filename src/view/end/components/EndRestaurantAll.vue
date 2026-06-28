@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, reactive, ref } from 'vue'
-import { deleteEndRestaurantApi, getEndRestaurantApi } from "@/api/end_restaurant"
+import { deleteEndRestaurantApi, get_categoryApi, getEndRestaurantApi } from "@/api/end_restaurant"
 import { useRouter } from "vue-router"
 import { type ComponentSize, ElMessageBox } from "element-plus"
-import type { EndRestaurantList, EndRestaurantSearch } from "@/api/end_restaurant/type.ts"
+import type { Category, EndRestaurantList, EndRestaurantSearch } from "@/api/end_restaurant/type.ts"
 import EndRestaurantCRUD from "@/view/end/components/EndRestaurantCRUD.vue"
 
 
@@ -22,10 +22,12 @@ const rowData = ref<EndRestaurantList>({
   id: '',
   name: '',
   tel: '',
-  openingHours: null,
+  openingHours: 0,
   address: '',
   description: '',
   image: '',
+  category_id: '',
+  category_name: ''
 })
 
 const handleRightClick = (row: any, _column: any, _cell: any, event: PointerEvent) => {
@@ -37,6 +39,8 @@ const handleRightClick = (row: any, _column: any, _cell: any, event: PointerEven
     address: row?.address ?? '',
     description: row?.description ?? '',
     image: row?.image ?? '',
+    category_id: row?.category_id ?? '',
+    category_name: row?.category_name ?? null,
   }
 
   event.preventDefault()
@@ -75,9 +79,12 @@ const handleUpdate = () => {
 }
 
 /* 查詢 */
+const categoryData = ref<Category[]>([])
+
 const formInline = reactive<EndRestaurantSearch>({
   id: '',
   name: '',
+  category_name: '',
   tel: '',
   openingHours: null,
   address: '',
@@ -121,9 +128,11 @@ onMounted(async () => {
   try {
     const res = await getEndRestaurantApi(formInline)
     tableData.value = res.data[0]
-    console.log("餐廳列表 :", tableData.value)
     total.value = res.data[1]
     showTable.value = true
+
+    const category_res = await get_categoryApi()
+    categoryData.value = category_res.data
   } catch (err) {
     await ElMessageBox.alert('無權限訪問後台', '提示', {
       confirmButtonText: '返回'
@@ -139,14 +148,20 @@ const updatedData = async () => {
   showDialog.value = false
 }
 
+const isSelected = ref(false)
+
 const handleSelectionChange = (restaurantList: EndRestaurantList[]) => {
   multipleSelection.value = restaurantList.map((restaurant: EndRestaurantList) => restaurant.name)
-  console.log('餐廳名稱列表 :', multipleSelection.value)
-  console.log(typeof tableData.value)
+  isSelected.value = true
 }
 
 const handleDelete = async () => {
-  await deleteEndRestaurantApi(multipleSelection.value)
+  if (isSelected.value) {
+    await deleteEndRestaurantApi(multipleSelection.value)
+  } else {
+    await deleteEndRestaurantApi([rowData.value.name])
+  }
+
   const res = await getEndRestaurantApi(formInline)
   tableData.value = res.data[0]
   total.value = res.data[1]
@@ -161,6 +176,18 @@ const handleDelete = async () => {
         <el-form :inline="true" :model="formInline" class="demo-form-inline flex flex-wrap gap-x-5 gap-y-3">
           <el-form-item label=餐廳名稱>
             <el-input v-model="formInline.name" placeholder="模糊查詢" clearable />
+          </el-form-item>
+          <el-form-item label="類別 :" style="width: 150px">
+            <el-select v-model="formInline.category_name" placeholder="尚未分類" clearable>
+              <el-option
+                  v-for="category in categoryData"
+                  :key="category.id"
+                  :label="category.name"
+                  :value="category.name"
+              >
+                {{ category.name }}
+              </el-option>
+            </el-select>
           </el-form-item>
           <el-form-item label=電話號碼>
             <el-input v-model="formInline.tel" placeholder="模糊查詢" clearable />
@@ -191,8 +218,9 @@ const handleDelete = async () => {
       >
         <el-table-column type="index" width="90" align="center" />
         <el-table-column type="selection" width="55" />
-        <el-table-column prop="name" label="名稱" width="480" />
-        <el-table-column prop="tel" label="電話" width="280" />
+        <el-table-column prop="name" label="名稱" width="350" />
+        <el-table-column prop="category_name" label="分類" width="150" />
+        <el-table-column prop="tel" label="電話" width="200" />
         <el-table-column prop="address" label="地址" />
       </el-table>
 
@@ -227,7 +255,7 @@ const handleDelete = async () => {
       <el-divider style="margin: 4px 0" />
       <li @click="handleUpdate">編輯</li>
       <el-divider style="margin: 4px 0" />
-      <li @click="">刪除</li>
+      <li @click="handleDelete">刪除</li>
     </ul>
   </div>
 </template>
