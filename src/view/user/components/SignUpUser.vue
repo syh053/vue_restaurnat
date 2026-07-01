@@ -45,6 +45,7 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
   await formEl.validate(async (valid, fields) => {
     if (valid) {
       await postUserApi(form)
+      await router.push({ name: "logIn" })
     } else {
       console.log('錯誤的驗證!', fields)
     }

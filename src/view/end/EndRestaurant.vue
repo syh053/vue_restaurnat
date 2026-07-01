@@ -9,9 +9,9 @@ import Aside from "@/view/end/components/Aside.vue"
 /* 導航 */
 const router = useRouter()
 
-/* 切換至後台餐廳列表 */
+/* 路由切換 */
 const handleToRestaurantList = async () => {
-  await router.push({name: 'endRestaurantAll'})
+  await router.push({name: 'endUserAdmin'})
 }
 
 const handleToRestaurantAdd = async () => {
@@ -39,8 +39,8 @@ const updatedData = async () => {
       <template #default>
         <el-menu>
           <el-menu-item class="justify-center" index="1" @click="handleToRestaurantList">
-            <Icon icon="material-symbols:restaurant" width="24" height="24" />
-            後台餐廳列表
+            <Icon icon="subway:admin" width="24" height="24" />
+            後台使用者
           </el-menu-item>
           <el-menu-item class="justify-center" index="2" @click="handleToRestaurantAdd">
             <Icon icon="material-symbols:add" width="24" height="24" />

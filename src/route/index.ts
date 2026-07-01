@@ -44,6 +44,11 @@ const routes: RouteRecordRaw[] = [
             }
         ]
     },
+    {
+        path: '/end/user',
+        name: 'endUserAdmin',
+        component: () => import('@/view/end/EndUserCrud.vue')
+    }
 ]
 
 export const router = createRouter({
