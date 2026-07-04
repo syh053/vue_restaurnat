@@ -4,8 +4,8 @@ import { Icon } from "@iconify/vue"
 import Aside from "@/view/end/components/Aside.vue"
 import { useRouter } from "vue-router"
 import { onMounted, reactive, ref } from "vue"
-import { getUserApi } from "@/api/end_user"
-import { type User, type UserSearch, userStatusOptions } from "@/api/end_user/type.ts"
+import { getUserApi, updateUserAccessApi } from "@/api/end_user"
+import { type UpdateUser, type User, type UserSearch, userStatusOptions } from "@/api/end_user/type.ts"
 import type { ComponentSize } from "element-plus"
 
 /* 導航 */
@@ -61,6 +61,13 @@ const handleCurrentChange = async (val: number) => {
   userList.value = res.data[0]
   total.value = res.data[1]
 }
+
+/* 編輯使用者權限 */
+const handleChangeAdmin = async (row: User) => {
+  const updated_data: UpdateUser = {id: row.id, is_admin: row.is_admin}
+  await updateUserAccessApi(updated_data)
+}
+
 </script>
 
 
@@ -116,13 +123,16 @@ const handleCurrentChange = async (val: number) => {
         >
           <el-table-column type="index" width="90" align="center" />
           <el-table-column type="selection" width="55" />
-          <el-table-column prop="name" label="名稱" width="250" />
-          <el-table-column prop="email" label="信箱" width="350" />
-          <el-table-column label="是否為管理員">
-            <template #default="scope">
-              <el-tag :type="scope.row.is_admin ? 'success' : 'danger'">
-                {{ scope.row.is_admin ? '是管理員' : '不是管理員' }}
-              </el-tag>
+          <el-table-column prop="name" label="名稱" width="350" />
+          <el-table-column prop="email" label="信箱" width="450" />
+          <el-table-column prop="is_admin" label="是否為管理員">
+            <template #default="{row}">
+              <el-switch
+                  v-model="row.is_admin"
+                  @change="handleChangeAdmin((row))"
+                  class="ml-2"
+                  style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949"
+              />
             </template>
           </el-table-column>
         </el-table>

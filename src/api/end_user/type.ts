@@ -13,6 +13,11 @@ export interface UserSearch {
     page_size: number
 }
 
+export interface UpdateUser {
+    id: string
+    is_admin: boolean
+}
+
 export const userStatusOptions = Object.freeze([
     { value: true, label: '是管理員' },
     { value: false, label: '不是管理員' }
