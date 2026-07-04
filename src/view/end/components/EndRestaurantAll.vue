@@ -94,6 +94,11 @@ const formInline = reactive<EndRestaurantSearch>({
 })
 
 const onSubmit = async () => {
+  // 若未輸入營業時間，自動補 null
+  if (!formInline.openingHours) {
+    formInline.openingHours = null
+  }
+
   formInline.current_page = 1
   const res = await getEndRestaurantApi(formInline)
   tableData.value = res.data[0]
@@ -148,6 +153,7 @@ const updatedData = async () => {
   showDialog.value = false
 }
 
+// 判斷是否勾選 checkbox
 const isSelected = ref(false)
 
 const handleSelectionChange = (restaurantList: EndRestaurantList[]) => {
