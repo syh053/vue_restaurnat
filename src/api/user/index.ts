@@ -12,3 +12,15 @@ export const userLogOutApi = async () => {
 export const postUserApi = async (data: UserPost) => {
     return request.post("/user/signup", data)
 }
+
+export const getUserExistedCheckApi = async (name: string) => {
+    return request.get("/user/check_existed", {
+        params: {name}
+    })
+}
+
+export const getEmailExistedCheckApi = async (email: string) => {
+    return request.get("/user/check_email_existed", {
+        params: {email}
+    })
+}

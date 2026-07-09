@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { reactive, ref } from "vue"
-import { postUserApi } from "@/api/user"
+import { getEmailExistedCheckApi, getUserExistedCheckApi, postUserApi } from "@/api/user"
 import type { FormInstance, FormRules } from "element-plus"
 import type { UserPost } from "@/api/user/tpye.ts"
 import { useRouter } from "vue-router"
@@ -26,11 +26,55 @@ const form = reactive<UserPost>({
 
 const ruleFormRef = ref<FormInstance>()
 
+// 檢查使用者名稱是否已註冊
+const validateUsername = (_rule: any, value: any, callback: any) => {
+  if (!value) {
+    return callback(new Error('請輸入使用者名稱'))
+  }
+
+  getUserExistedCheckApi(value)
+      .then((res) => {
+        if (!res.data) {
+          callback(new Error('該名稱已被註冊'))
+        } else {
+          callback() // 驗證成功
+        }
+      })
+      .catch((error) => {
+        console.error(error)
+        callback(new Error('伺服器連線失敗，無法驗證名稱'))
+      })
+}
+
+const validateEmail = (_rule: any, value: any, callback: any) => {
+  if (!value) {
+    return callback(new Error('請輸入 email'))
+  }
+
+  getEmailExistedCheckApi(value)
+      .then(res => {
+        if (!res.data) {
+          callback(new Error('該信箱已被註冊'))
+        } else {
+          callback()  // 驗證成功
+        }
+      })
+      .catch((error) => {
+        console.error(error)
+        callback(new Error('伺服器連線失敗，無法驗證信箱'))
+      })
+}
+
 const rules = reactive<FormRules<UserPost>>({
-  name: [{required: true, message: "請輸入名稱", trigger: "change"}],
+  name: [
+    {required: true, message: "請輸入名稱", trigger: "change"},
+    {validator: validateUsername, trigger: "blur"}
+  ],
   email: [
     {required: true, message: "請輸入 email", trigger: "change"},
-    {type: "email", message: "輸入格式錯誤", trigger: "blur"}],
+    {type: "email", message: "輸入格式錯誤", trigger: "blur"},
+    {validator: validateEmail, trigger: "blur"}
+  ],
   password: [{required: true, message: "請輸入密碼", trigger: "change"}],
   confirm_password: [
     {required: true, message: "請輸入確認密碼", trigger: "change"},
@@ -38,14 +82,19 @@ const rules = reactive<FormRules<UserPost>>({
   ],
 })
 
+
 /* 註冊 */
 const onSubmit = async (formEl: FormInstance | undefined) => {
   if (!formEl) return
 
-  await formEl.validate(async (valid, fields) => {
+  formEl.validate(async (valid, fields) => {
     if (valid) {
-      await postUserApi(form)
-      await router.push({ name: "logIn" })
+      try {
+        await postUserApi(form)
+        await router.push({name: "logIn"})
+      } catch (error) {
+        console.log('API 送出失敗：', error)
+      }
     } else {
       console.log('錯誤的驗證!', fields)
     }
@@ -54,7 +103,7 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
 
 /* 登入 */
 const jumpSignIn = async () => {
-  await router.push({ name: "logIn" })
+  await router.push({name: "logIn"})
 }
 </script>
 
