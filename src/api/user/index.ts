@@ -14,7 +14,7 @@ export const postUserApi = async (data: UserPost) => {
 }
 
 export const getUserExistedCheckApi = async (name: string) => {
-    return request.get("/user/check_existed", {
+    return request.get("/user/check_name_existed", {
         params: {name}
     })
 }
