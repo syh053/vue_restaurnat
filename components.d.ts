@@ -49,6 +49,7 @@ declare module 'vue' {
     ElTimePicker: typeof import('element-plus/es')['ElTimePicker']
     ElUpload: typeof import('element-plus/es')['ElUpload']
     FrontRestaurant: typeof import('./src/view/front/FrontRestaurant.vue')['default']
+    PageTable: typeof import('./src/components/PageTable.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SignUpUser: typeof import('./src/view/user/components/SignUpUser.vue')['default']

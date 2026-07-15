@@ -1,9 +1,12 @@
 import { request } from "@/api/utils/request.ts"
 import type { EndRestaurantAdd, EndRestaurantSearch } from "@/api/end_restaurant/type.ts"
+import { cleanParams } from "@/tools/helpers.ts"
 
 
 export const getEndRestaurantApi = async (params: EndRestaurantSearch) => {
-    return request.get("/end/restaurant/all", {params})
+    const new_params = cleanParams(params)
+
+    return request.get("/end/restaurant/all", {params : new_params})
 }
 
 export const get_categoryApi = async () => {
