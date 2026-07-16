@@ -1,11 +1,12 @@
 <script setup lang="ts">
 
-import PageTable from "@/components/PageTable.vue"
+import PageTable, { type ContextMenuOption } from "@/components/PageTable.vue"
 import { useRouter } from "vue-router"
-import { getUserApi, updateUserAccessApi } from "@/api/end_user"
+import { deleteUserApi, getUserApi, updateUserAccessApi } from "@/api/end_user"
 import Aside from "@/view/front/components/Aside.vue"
-import { reactive } from "vue"
+import { reactive, ref, useTemplateRef } from "vue"
 import { type UpdateUser, type User, type UserSearch, userStatusOptions } from "@/api/end_user/type.ts"
+import { ElMessageBox } from "element-plus"
 
 /* 導航 */
 const router = useRouter()
@@ -29,6 +30,61 @@ const handleChangeAdmin = async (row: User) => {
   const updated_data: UpdateUser = {id: row.id, is_admin: row.is_admin}
   await updateUserAccessApi(updated_data)
 }
+
+/* 💡 宣告右鍵功能配置陣列 */
+const multipleSelection = ref<string[]>([]) // 多選資料
+/* 勾選變更 */
+
+const handleSelectionChange = (list: User[]) => {
+  multipleSelection.value = list.map(item => item.id)
+}
+
+const tableRef = useTemplateRef('pageTable')
+
+const handleDelete = async (singleId?: string) => {
+  console.log("觸發刪除按鈕")
+  console.log('singleId :', singleId)
+  console.log('multipleSelection :', multipleSelection.value)
+
+  const ids = singleId ? [singleId] : multipleSelection.value
+
+  if (!ids || ids.length === 0 || ids[0] === '') {
+    await ElMessageBox.alert('請先選取要刪除的資料', '提示', {type: 'warning'})
+    return
+  }
+
+  ElMessageBox.confirm(
+      "確定要刪除使用者嗎？",
+      "使用者刪除",
+      {
+        confirmButtonText: "刪除",
+        cancelButtonText: "取消",
+      }
+  )
+      .then(async () => {
+        await deleteUserApi(ids)
+
+        // 重新整理表格
+        tableRef.value?.refresh()
+
+        // ElMessage.success("刪除成功")
+        await ElMessageBox.alert('刪除成功', '提示', {type: 'warning'})
+      })
+      .catch(() => {
+        // ElMessage.info("已取消刪除")
+        ElMessageBox.alert('已取消刪除', '提示', {type: 'warning'})
+      })
+}
+
+const menuConfigs = ref<ContextMenuOption[]>([
+  {
+    label: '刪除',
+    divided: true, // 在上方加上分割線
+    action: (row) => {
+      handleDelete(row)
+    }
+  }
+])
 </script>
 
 
@@ -46,7 +102,9 @@ const handleChangeAdmin = async (row: User) => {
     </Aside>
 
     <el-main>
-      <PageTable v-model="formInline" :getFormDataApi="getUserApi" tableTitle="後台使用者列表">
+      <PageTable ref="pageTable" v-model="formInline" :getFormDataApi="getUserApi" tableTitle="後台使用者列表"
+                 :contextMenuOptions="menuConfigs" @selection-change="handleSelectionChange"
+                 @batch-delete="handleDelete">
         <template #searchList>
           <el-form-item label=名稱>
             <el-input v-model="formInline.name" placeholder="模糊查詢" clearable />
