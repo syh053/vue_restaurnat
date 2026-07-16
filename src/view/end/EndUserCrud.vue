@@ -7,11 +7,12 @@ import Aside from "@/view/front/components/Aside.vue"
 import { reactive, ref, useTemplateRef } from "vue"
 import { type UpdateUser, type User, type UserSearch, userStatusOptions } from "@/api/end_user/type.ts"
 import { ElMessageBox } from "element-plus"
+import type { EndRestaurantList } from "@/api/end_restaurant/type.ts"
 
 /* 導航 */
 const router = useRouter()
 
-/* 切換至後台餐廳列表 */
+/* 切換至後台使用者列表 */
 const handleToRestaurantList = async () => {
   await router.push({name: 'endRestaurantAll'})
 }
@@ -41,39 +42,45 @@ const handleSelectionChange = (list: User[]) => {
 
 const tableRef = useTemplateRef('pageTable')
 
-const handleDelete = async (singleId?: string) => {
-  console.log("觸發刪除按鈕")
-  console.log('singleId :', singleId)
-  console.log('multipleSelection :', multipleSelection.value)
+const handleDelete = async (row?: EndRestaurantList) => {
+  let targets: string[] = []
+  let confirmMessage = ''
 
-  const ids = singleId ? [singleId] : multipleSelection.value
-
-  if (!ids || ids.length === 0 || ids[0] === '') {
-    await ElMessageBox.alert('請先選取要刪除的資料', '提示', {type: 'warning'})
-    return
+  if (row && row.id) {
+    // 狀況 A：從右鍵選單點擊（單筆刪除）
+    targets = [row.id]
+    confirmMessage = `確定要刪除使用者「${row.name}」嗎？`
+  } else {
+    // 狀況 B：從頂部按鈕點擊（批量刪除）
+    if (multipleSelection.value.length === 0) {
+      await ElMessageBox.alert('請先勾選要刪除的使用者', '提示', {type: 'warning'})
+      return
+    }
+    targets = multipleSelection.value
+    confirmMessage = `確定要刪除這 ${targets.length} 個使用者嗎？`
   }
 
-  ElMessageBox.confirm(
-      "確定要刪除使用者嗎？",
-      "使用者刪除",
-      {
-        confirmButtonText: "刪除",
-        cancelButtonText: "取消",
-      }
-  )
-      .then(async () => {
-        await deleteUserApi(ids)
+  // 執行刪除與提示
+  try {
+    await ElMessageBox.confirm(confirmMessage, '警告', {
+      confirmButtonText: '確定',
+      cancelButtonText: '取消',
+      type: 'warning'
+    })
 
-        // 重新整理表格
-        tableRef.value?.refresh()
+    // 呼叫 API（不論單筆或多選，API 接收的都是陣列）
+    await deleteUserApi(targets)
 
-        // ElMessage.success("刪除成功")
-        await ElMessageBox.alert('刪除成功', '提示', {type: 'warning'})
-      })
-      .catch(() => {
-        // ElMessage.info("已取消刪除")
-        ElMessageBox.alert('已取消刪除', '提示', {type: 'warning'})
-      })
+    // 重新整理表格
+    tableRef.value?.refresh()
+
+    // 如果是批量刪除，成功後清空勾選紀錄
+    if (!row) {
+      multipleSelection.value = []
+    }
+  } catch {
+    // 使用者取消刪除
+  }
 }
 
 const menuConfigs = ref<ContextMenuOption[]>([
