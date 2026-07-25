@@ -25,7 +25,21 @@ const routes: RouteRecordRaw[] = [
     {
         path: '/front/restaurant',
         name: 'frontRestaurant',
-        component: () => import('@/view/front/FrontRestaurant.vue')
+        component: () => import('@/view/front/FrontRestaurant.vue'),
+        children: [
+            {
+                path: 'all',
+                name: 'frontRestaurantAll',
+                component: () => import('@/view/front/components/FrontRestaurantAll.vue')
+            },
+            {
+                path: 'detail/:id',
+                name: 'frontRestaurantDetail',
+                component: () => import('@/view/front/components/FrontRestaurantView.vue')
+            },
+        ],
+        redirect: "/front/restaurant/all"
+
     },
     {
         path: '/end/restaurant',
