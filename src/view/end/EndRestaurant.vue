@@ -37,7 +37,7 @@ const updatedData = async () => {
   <el-container>
     <Aside>
       <template #default>
-        <el-menu>
+        <el-menu class="custom-menu">
           <el-menu-item class="justify-center" index="1" @click="handleToRestaurantList">
             <Icon icon="subway:admin" width="24" height="24" />
             後台使用者
@@ -65,6 +65,10 @@ const updatedData = async () => {
   />
 </template>
 
-<style scoped>
+<style scoped lang="scss">
+@use "@/common" as common;
 
+.custom-menu {
+  @include common.no-border-right;
+}
 </style>
