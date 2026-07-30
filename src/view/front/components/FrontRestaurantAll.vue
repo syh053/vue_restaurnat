@@ -73,12 +73,7 @@ const handleToDetail = (item: EndRestaurantList) => {
   restaurantInfo.value = item
 
   // 更新網址
-  router.push({
-    query: {
-      ...router.currentRoute.value.query,
-      id: item.id
-    }
-  })
+  window.history.pushState({}, '', `/front/restaurant?id=${item.id}`)
 }
 
 // 初始化時直接執行第一次載入
@@ -123,7 +118,7 @@ onMounted(() => {
       <p v-if="noMore">沒有更多餐廳了</p>
     </div>
 
-    <FrontRestaurantView v-model="showDialog" :restaurant="restaurantInfo" />
+    <FrontRestaurantView v-if="showDialog" v-model="showDialog" :restaurant="restaurantInfo" />
   </el-main>
 </template>
 

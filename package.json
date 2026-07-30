@@ -13,6 +13,7 @@
     "@iconify/vue": "^5.0.1",
     "@tailwindcss/vite": "^4.3.0",
     "axios": "^1.16.1",
+    "dayjs": "^1.11.21",
     "element-plus": "^2.14.0",
     "js-cookie": "^3.0.8",
     "tailwindcss": "^4.3.0",

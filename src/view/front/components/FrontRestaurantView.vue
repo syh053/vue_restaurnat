@@ -1,32 +1,65 @@
 <script setup lang="ts">
 import type { EndRestaurantList } from "@/api/end_restaurant/type.ts"
-import { useRouter } from "vue-router"
+import { ref, watch } from "vue"
+import { getRestaurantCommentApi } from "@/api/comment"
+import dayjs from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
 
-/* 導航 */
-const router = useRouter()
 
+/* 設定時間區域 */
+dayjs.extend(relativeTime)
+dayjs.locale('zh-tw')
+
+const formatRelativeTime = (date: string) => {
+  return dayjs(date).fromNow()
+}
+
+/* Props */
 const props = defineProps<{
   restaurant?: EndRestaurantList
 }>()
+
+/* 資料 */
+const comments = ref<any[]>([])
+
+/* 監控餐廳資料變化 */
+watch(
+    () => props.restaurant?.id,
+    async (restaurantId) => {
+
+      if (!restaurantId) return
+
+      const response = await getRestaurantCommentApi(restaurantId)
+
+      comments.value = response.data
+
+      console.log('此餐廳的評論 :', comments)
+    },
+    {immediate: true}
+)
+
 
 /* Dialog */
 const showDialog = defineModel<boolean>({default: false})
 
 /* 關閉餐廳詳細察看畫面 */
 const closeDialog = () => {
-  const {id, ...restQuery} = router.currentRoute.value.query
-
   // 更新網址
-  router.push({
-    query: restQuery
-  })
+  window.history.pushState({}, '', `/front/restaurant/all`)
 
   showDialog.value = false
+}
+
+/* 餐廳評論功能 */
+const formText = ref<string>('')
+
+const onSubmit = async () => {
+  console.log('此餐廳的評論 :', props.restaurant!.id)
 }
 </script>
 
 <template>
-  <el-dialog class="dialog-box" v-model="showDialog" width="60%" style="padding: 2em;">
+  <el-dialog class="dialog-box" v-model="showDialog" @close="closeDialog" width="60%" style="padding: 2em;">
     <div class="header">
       <h2>{{ props.restaurant?.name }}</h2>
       <p>{{ props.restaurant?.category_name }}</p>
@@ -52,6 +85,27 @@ const closeDialog = () => {
 
     <hr>
 
+    <div>
+      <p class="mb-3">評論區</p>
+      <div class="comments" v-for="comment in comments">
+        <span>{{ comment.user_name }} : {{ comment.comment }} {{formatRelativeTime(comment.created_at)}}</span>
+      </div>
+    </div>
+
+    <hr>
+
+    <el-form label-position="top" size="large">
+      <el-form-item label="留下餐廳評論">
+        <el-input v-model="formText" type="textarea" />
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="onSubmit">送出</el-button>
+        <el-button>取消</el-button>
+      </el-form-item>
+    </el-form>
+
+    <hr>
+
     <div class="btn-position">
       <button class="btn border-2 border-emerald-700" @click="closeDialog">返回</button>
     </div>
@@ -59,8 +113,6 @@ const closeDialog = () => {
 </template>
 
 <style scoped lang="scss">
-
-
 :deep(.dialog-box) {
   height: 700px;
   display: flex;
@@ -71,7 +123,7 @@ const closeDialog = () => {
     flex: 1;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    overflow: auto;
   }
 }
 
@@ -120,6 +172,15 @@ hr {
 
 p {
   text-align: left;
+  font-size: 1.5em;
+}
+
+/* 留言區 */
+.comments {
+  text-align: left;
+}
+
+:deep(.el-form-item__label) {
   font-size: 1.5em;
 }
 </style>
