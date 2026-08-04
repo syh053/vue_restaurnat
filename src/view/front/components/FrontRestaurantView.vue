@@ -32,8 +32,6 @@ watch(
       const response = await getRestaurantCommentApi(restaurantId)
 
       comments.value = response.data
-
-      console.log('此餐廳的評論 :', comments)
     },
     {immediate: true}
 )
@@ -51,104 +49,96 @@ const closeDialog = () => {
 }
 
 /* 餐廳評論功能 */
-const formText = ref<string>('')
+const inputText = ref<string>('')
 
 const onSubmit = async () => {
-  console.log('此餐廳的評論 :', props.restaurant!.id)
+  console.log(`\n送出此餐廳 ${props.restaurant!.id} 的評論`)
 }
 </script>
 
 <template>
-  <el-dialog class="dialog-box" v-model="showDialog" @close="closeDialog" width="60%" style="padding: 2em;">
-    <div class="header">
-      <h2>{{ props.restaurant?.name }}</h2>
-      <p>{{ props.restaurant?.category_name }}</p>
-    </div>
-
+  <el-dialog class="dialog-box" v-model="showDialog" width="80%" :show-close="false" :before-close="closeDialog">
     <div class="feature-container">
       <div class="feature-left">
         <img
             :src="props.restaurant?.image ? 'http://localhost:8888' + props.restaurant.image : 'https://sansalife.tw/wp-content/uploads/2023/04/caesarmetro-restaurant-14_%E7%BB%93%E6%9E%9C-jpg.webp'"
             alt="餐廳圖片">
-        <p>營業時間 : {{ props.restaurant?.openingHours }} 小時</p>
-        <p>餐廳電話 : {{ props.restaurant?.tel }}</p>
-        <p>餐廳地址 : {{ props.restaurant?.address }}</p>
       </div>
 
       <div class="feature-right">
-        <p>
-          {{ props.restaurant?.description }}
-        </p>
+        <div class="header">
+          <h2>{{ props.restaurant?.name }}</h2>
+          <p>{{ props.restaurant?.category_name }}</p>
+        </div>
+
+        <div class="body">
+          <p>營業時間 : {{ props.restaurant?.openingHours }} 小時</p>
+          <p>餐廳電話 : {{ props.restaurant?.tel }}</p>
+          <p>餐廳地址 : {{ props.restaurant?.address }}</p>
+
+          <hr>
+
+          <p> {{ props.restaurant?.description }} </p>
+        </div>
+
+        <hr>
+
+        <div class="comment-container">
+          <div class="comments" v-for="comment in comments">
+            <p class="comment-block">
+              <a class="user-name"><strong>{{ comment.user_name }}</strong></a>
+              <span>{{ comment.comment }}</span>
+              <span>{{ formatRelativeTime(comment.created_at) }}</span>
+            </p>
+          </div>
+        </div>
+
+        <hr>
+
+        <el-form class="comment-input">
+          <el-form-item class="input">
+            <input id="comment-input" name="comment" v-model="inputText" placeholder="請輸入評論..." />
+          </el-form-item>
+          <el-form-item class="button">
+            <button class="btn btn-ghost" @click.prevent="onSubmit">送出</button>
+          </el-form-item>
+        </el-form>
       </div>
-
-    </div>
-
-    <hr>
-
-    <div>
-      <p class="mb-3">評論區</p>
-      <div class="comments" v-for="comment in comments">
-        <span>{{ comment.user_name }} : {{ comment.comment }} {{formatRelativeTime(comment.created_at)}}</span>
-      </div>
-    </div>
-
-    <hr>
-
-    <el-form label-position="top" size="large">
-      <el-form-item label="留下餐廳評論">
-        <el-input v-model="formText" type="textarea" />
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="onSubmit">送出</el-button>
-        <el-button>取消</el-button>
-      </el-form-item>
-    </el-form>
-
-    <hr>
-
-    <div class="btn-position">
-      <button class="btn border-2 border-emerald-700" @click="closeDialog">返回</button>
     </div>
   </el-dialog>
 </template>
 
 <style scoped lang="scss">
-:deep(.dialog-box) {
-  height: 700px;
-  display: flex;
-  flex-direction: column;
-
-  // 讓內部 body 滿格並把超出部分設為自動滾動或隱藏
-  .el-dialog__body {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    overflow: auto;
-  }
+.el-dialog__header.show-close {
+  display: none;
 }
 
 .header {
-  margin-bottom: 2em;
+  display: flex;
+  flex-direction: row;
 
   h2 {
+    flex: 1;
     text-align: left;
   }
 }
 
 .feature-container {
+  height: 75vh;
   flex: 1;
   display: flex;
   flex-direction: row;
 }
 
 .feature-left {
-  flex: 1.5;
+  flex: 2;
 
   /* 控制圖片最大高度與縮放 */
   img {
     width: 100%;
-    height: 250px; /* 給圖片一個固定上限高度 */
-    object-fit: cover; /* 保持比例並填滿，不會拉伸變形 */
+    height: 100%;
+    object-fit: contain;
+    background-color: #000;
     border-radius: 8px;
   }
 }
@@ -158,8 +148,10 @@ const onSubmit = async () => {
 }
 
 .feature-right {
-  flex: 2;
-  padding-left: 3em;
+  display: flex;
+  flex-direction: column;
+  flex: 1.5;
+  padding-left: 1em;
 }
 
 hr {
@@ -176,11 +168,58 @@ p {
 }
 
 /* 留言區 */
-.comments {
-  text-align: left;
+.comment-container {
+  flex: 1;
 }
 
-:deep(.el-form-item__label) {
-  font-size: 1.5em;
+.comments {
+  text-align: left;
+  padding: 0.5em 0;
+}
+
+
+
+.comment-block {
+  display: flex;
+  flex-direction: row;
+
+  > a:first-of-type {
+    margin-right: 0.5em;
+  }
+
+  > span:first-of-type {
+    flex: 1;
+  }
+
+  > span:last-of-type {
+    font-size: 0.8em;
+  }
+}
+
+.user-name {
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+/* 留言輸入框 */
+.comment-input {
+  display: flex;
+  flex-direction: row;
+
+  .input {
+    flex: 1;
+    margin-right: 0.5em;
+
+    &:focus-within {
+      outline: none;
+      box-shadow: none;
+      border-color: transparent;
+    }
+  }
+}
+
+#comment-input {
+  font-size: 1.3em;
 }
 </style>
