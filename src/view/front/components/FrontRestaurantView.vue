@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import type { EndRestaurantList } from "@/api/end_restaurant/type.ts"
 import { ref, watch } from "vue"
-import { getRestaurantCommentApi } from "@/api/comment"
+import { getRestaurantCommentApi, postRestaurantCommentApi } from "@/api/comment"
 import dayjs from 'dayjs'
+import 'dayjs/locale/zh-tw' // 匯入繁體中文語言包
 import relativeTime from 'dayjs/plugin/relativeTime'
+import type { restaurantCommentAdd } from "@/api/comment/type.ts"
 
 
 /* 設定時間區域 */
@@ -22,6 +24,12 @@ const props = defineProps<{
 /* 資料 */
 const comments = ref<any[]>([])
 
+/* 取得評論資料 */
+const getCommentData = async (restaurantId: string) => {
+  const response = await getRestaurantCommentApi(restaurantId)
+  return response.data
+}
+
 /* 監控餐廳資料變化 */
 watch(
     () => props.restaurant?.id,
@@ -29,9 +37,7 @@ watch(
 
       if (!restaurantId) return
 
-      const response = await getRestaurantCommentApi(restaurantId)
-
-      comments.value = response.data
+      comments.value = await getCommentData(restaurantId)
     },
     {immediate: true}
 )
@@ -51,8 +57,22 @@ const closeDialog = () => {
 /* 餐廳評論功能 */
 const inputText = ref<string>('')
 
+const clearCommentInput = () => {
+  inputText.value = ''
+}
+
 const onSubmit = async () => {
-  console.log(`\n送出此餐廳 ${props.restaurant!.id} 的評論`)
+  const data: restaurantCommentAdd = {
+    text: inputText.value,
+    restaurant_id: props.restaurant!.id
+  }
+
+  await postRestaurantCommentApi(data)
+
+  comments.value = await getCommentData(props.restaurant!.id)
+
+  // 清除輸入欄
+  clearCommentInput()
 }
 </script>
 
@@ -88,8 +108,8 @@ const onSubmit = async () => {
             <p class="comment-block">
               <a class="user-name"><strong>{{ comment.user_name }}</strong></a>
               <span>{{ comment.comment }}</span>
-              <span>{{ formatRelativeTime(comment.created_at) }}</span>
             </p>
+            <p>{{ formatRelativeTime(comment.created_at) }}</p>
           </div>
         </div>
 
@@ -175,8 +195,12 @@ p {
 .comments {
   text-align: left;
   padding: 0.5em 0;
-}
 
+  p:nth-of-type(2) {
+    font-size: 1.2em;
+    margin-top: 0.5em;
+  }
+}
 
 
 .comment-block {
@@ -186,19 +210,12 @@ p {
   > a:first-of-type {
     margin-right: 0.5em;
   }
-
-  > span:first-of-type {
-    flex: 1;
-  }
-
-  > span:last-of-type {
-    font-size: 0.8em;
-  }
 }
 
 .user-name {
   &:hover {
     cursor: pointer;
+    text-decoration: underline;
   }
 }
 
