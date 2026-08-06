@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import type { EndRestaurantList } from "@/api/end_restaurant/type.ts"
 import { ref, watch } from "vue"
-import { getRestaurantCommentApi, postRestaurantCommentApi } from "@/api/comment"
+import { deleteRestaurantCommentApi, getRestaurantCommentApi, postRestaurantCommentApi } from "@/api/comment"
 import dayjs from 'dayjs'
 import 'dayjs/locale/zh-tw' // 匯入繁體中文語言包
 import relativeTime from 'dayjs/plugin/relativeTime'
-import type { restaurantCommentAdd } from "@/api/comment/type.ts"
+import type { restaurantCommentAdd, restaurantCommentDelete } from "@/api/comment/type.ts"
+import { useUserStore } from "@/stores/user.ts"
+import { ElMessageBox } from "element-plus"
 
 
 /* 設定時間區域 */
@@ -15,6 +17,9 @@ dayjs.locale('zh-tw')
 const formatRelativeTime = (date: string) => {
   return dayjs(date).fromNow()
 }
+
+/* 初始化 Store */
+const userStore = useUserStore()
 
 /* Props */
 const props = defineProps<{
@@ -69,10 +74,37 @@ const onSubmit = async () => {
 
   await postRestaurantCommentApi(data)
 
+  // 重整評論資料
   comments.value = await getCommentData(props.restaurant!.id)
 
   // 清除輸入欄
   clearCommentInput()
+}
+
+/* 刪除餐廳評論功能 */
+const handleDeleteComment = async (comment: any) => {
+  try {
+    await ElMessageBox.confirm(`確定要出刪除『${comment.name}』的評論嗎?`, '警告', {
+      confirmButtonText: '確定',
+      cancelButtonText: '取消',
+      type: 'warning'
+    })
+
+    // 執行刪除請求
+    const deleteParams: restaurantCommentDelete = {restaurant_id: props.restaurant!.id, comment_id: comment.comment_id}
+    await deleteRestaurantCommentApi(deleteParams)
+
+    // 重整評論資料
+    comments.value = await getCommentData(props.restaurant!.id)
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error("發生錯誤：", error.message);
+    } else {
+      console.error("發生未知錯誤：", error);
+    }
+  } finally {
+    console.log("處理完成")
+  }
 }
 </script>
 
@@ -108,6 +140,9 @@ const onSubmit = async () => {
             <p class="comment-block">
               <a class="user-name"><strong>{{ comment.user_name }}</strong></a>
               <span>{{ comment.comment }}</span>
+              <el-button class="delete-btn" v-if="userStore.userInfo!.is_admin" type="danger" link
+                         @click="handleDeleteComment(comment)">刪除
+              </el-button>
             </p>
             <p>{{ formatRelativeTime(comment.created_at) }}</p>
           </div>
@@ -210,6 +245,10 @@ p {
   > a:first-of-type {
     margin-right: 0.5em;
   }
+
+  > span {
+    flex: 1;
+  }
 }
 
 .user-name {
@@ -238,5 +277,10 @@ p {
 
 #comment-input {
   font-size: 1.3em;
+}
+
+/* 刪除按鈕 */
+.delete-btn {
+  font-size: 1em;
 }
 </style>

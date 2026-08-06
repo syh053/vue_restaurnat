@@ -1,13 +1,15 @@
 <script setup lang="ts">
 import { reactive, ref } from "vue"
-import { userLogInApi } from "@/api/user"
 import type { FormInstance, FormRules } from "element-plus"
 import type { UserLogIn } from "@/api/user/tpye.ts"
 import { useRouter } from "vue-router"
+import { useUserStore } from "@/stores/user.ts"
 
 /* 導航 */
 const router = useRouter()
 
+/* 初始化 Store */
+const userStore = useUserStore()
 
 /* 表單相關 */
 const form = reactive<UserLogIn>({
@@ -25,16 +27,16 @@ const rules = reactive<FormRules<UserLogIn>>({
 /* 登入 */
 const onSubmit = async (formEl: FormInstance | undefined) => {
   if (!formEl) return
-  await formEl.validate(async (valid, fields) => {
-    if (valid) {
-      const res = await userLogInApi(form)
-      if (res.status === 200) {
-        await router.push({ name: "frontRestaurant" })
-      }
-    } else {
-      console.log('錯誤的使用者名稱或密碼', fields)
-    }
-  })
+
+  try {
+    await formEl.validate()
+
+    await userStore.login(form)
+
+    await router.push({ name: "frontRestaurant" })
+  } catch (fields) {
+    console.log("驗證失敗", fields)
+  }
 }
 
 /* 跳轉到註冊頁 */

@@ -47,9 +47,6 @@ const loadData = async () => {
     const newList = res.data[0] || []
     total.value = res.data[1] || 0
 
-    console.log('newList :', newList)
-    console.log('total :', total.value)
-
     // 將新資料「累加」到現有的陣列中，而不是覆蓋
     tableData.value.push(...newList)
 
