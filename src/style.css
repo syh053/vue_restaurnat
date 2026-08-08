@@ -307,8 +307,15 @@ code {
         border-left-color: var(--border);
     }
 
-    &::after {
+        &::after {
         right: 0;
         border-right-color: var(--border);
     }
+}
+
+
+hr {
+    border: none; /* 清除瀏覽器預設樣式 */
+    height: 1px;  /* 設定線條粗細 */
+    background-color: rgba(0, 0, 0, 0.1); /* 最後一個數字 0.1 代表 10% 透明度，越小越淡 */
 }

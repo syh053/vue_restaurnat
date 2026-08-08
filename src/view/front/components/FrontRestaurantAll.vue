@@ -47,9 +47,6 @@ const loadData = async () => {
     const newList = res.data[0] || []
     total.value = res.data[1] || 0
 
-    console.log('newList :', newList)
-    console.log('total :', total.value)
-
     // 將新資料「累加」到現有的陣列中，而不是覆蓋
     tableData.value.push(...newList)
 
@@ -73,12 +70,7 @@ const handleToDetail = (item: EndRestaurantList) => {
   restaurantInfo.value = item
 
   // 更新網址
-  router.push({
-    query: {
-      ...router.currentRoute.value.query,
-      id: item.id
-    }
-  })
+  window.history.pushState({}, '', `/front/restaurant?id=${item.id}`)
 }
 
 // 初始化時直接執行第一次載入
@@ -128,7 +120,7 @@ const API_BASE_URL = import.meta.env.VITE_API_URL
       <p v-if="noMore">沒有更多餐廳了</p>
     </div>
 
-    <FrontRestaurantView v-model="showDialog" :restaurant="restaurantInfo" />
+    <FrontRestaurantView v-if="showDialog" v-model="showDialog" :restaurant="restaurantInfo" />
   </el-main>
 </template>
 
