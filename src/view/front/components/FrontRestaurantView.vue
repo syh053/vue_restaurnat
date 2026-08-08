@@ -23,6 +23,9 @@ const closeDialog = () => {
 
   showDialog.value = false
 }
+
+/* 取得圖片前綴 */
+const API_BASE_URL = import.meta.env.VITE_API_URL
 </script>
 
 <template>
@@ -35,7 +38,9 @@ const closeDialog = () => {
     <div class="feature-container">
       <div class="feature-left">
         <img
-            :src="props.restaurant?.image ? 'http://localhost:8888' + props.restaurant.image : 'https://sansalife.tw/wp-content/uploads/2023/04/caesarmetro-restaurant-14_%E7%BB%93%E6%9E%9C-jpg.webp'"
+            :src="props.restaurant?.image
+            ? API_BASE_URL + restaurant?.image
+            : 'https://sansalife.tw/wp-content/uploads/2023/04/caesarmetro-restaurant-14_%E7%BB%93%E6%9E%9C-jpg.webp'"
             alt="餐廳圖片">
         <p>營業時間 : {{ props.restaurant?.openingHours }} 小時</p>
         <p>餐廳電話 : {{ props.restaurant?.tel }}</p>
