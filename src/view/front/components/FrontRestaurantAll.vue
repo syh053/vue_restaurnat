@@ -85,6 +85,9 @@ const handleToDetail = (item: EndRestaurantList) => {
 onMounted(() => {
   loadData()
 })
+
+// 取得圖片前綴
+const API_BASE_URL = import.meta.env.VITE_API_URL
 </script>
 
 <template>
@@ -100,7 +103,9 @@ onMounted(() => {
           </div>
         </template>
         <img
-            :src="item.image ? 'http://localhost:8888' + item.image : 'https://sansalife.tw/wp-content/uploads/2023/04/caesarmetro-restaurant-14_%E7%BB%93%E6%9E%9C-jpg.webp'"
+            :src="item.image ?
+            API_BASE_URL + item.image
+            : 'https://sansalife.tw/wp-content/uploads/2023/04/caesarmetro-restaurant-14_%E7%BB%93%E6%9E%9C-jpg.webp'"
             alt="圖片"
             style="height: 350px; width: 100%; object-fit: cover;"
         />

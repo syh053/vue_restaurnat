@@ -100,7 +100,12 @@ watch(
     {immediate: true}
 )
 
+
+
 /* 圖片預覽邏輯 */
+
+const API_BASE_URL = import.meta.env.VITE_API_URL // 取得圖片前綴
+
 const displayImage = computed(() => {
   const imgPath = formModel.value.image
   if (!imgPath) {
@@ -109,7 +114,7 @@ const displayImage = computed(() => {
   if (imgPath.startsWith('data:') || imgPath.startsWith('http')) {
     return imgPath
   }
-  return `http://localhost:8888${imgPath}`
+  return `${API_BASE_URL}${imgPath}`
 })
 
 const handleImageChange = (uploadFile: UploadFile) => {
