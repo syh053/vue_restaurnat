@@ -70,7 +70,10 @@ const handleToDetail = (item: EndRestaurantList) => {
   restaurantInfo.value = item
 
   // 更新網址
-  window.history.pushState({}, '', `/front/restaurant?id=${item.id}`)
+  router.push({
+    path: '/front/restaurant',
+    query: { id: item.id }
+  })
 }
 
 // 初始化時直接執行第一次載入

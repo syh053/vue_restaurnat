@@ -189,7 +189,7 @@ const onCancel = () => {
             :src="displayImage"
             alt="餐廳圖片"
             class="restaurant-img"
-            :class="{ 'cursor-pointer hover:opacity-80': !props.disabled }"
+            :class="{ 'hover:opacity-80': !props.disabled }"
             style="max-height: 350px;"
         >
         <el-icon v-else class="avatar-uploader-icon">

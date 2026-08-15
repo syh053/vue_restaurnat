@@ -25,4 +25,7 @@ export const useUserStore = defineStore('user', () => {
         userInfo,
         login,
     }
+}, {
+    // 請在 tsconfig.app.json -> compilerOptions -> types 中加入 "pinia-plugin-persistedstate"
+    persist: true
 })

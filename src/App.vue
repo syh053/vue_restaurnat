@@ -20,6 +20,11 @@ const logOut = async () => {
 const backTOHome = () => {
   router.push({name: 'frontRestaurant'})
 }
+
+/* 前往使用者資訊頁面 */
+const toUserInfo = async () => {
+  await router.push({name: 'userInfo'})
+}
 </script>
 
 <template>
@@ -46,6 +51,9 @@ const backTOHome = () => {
                   src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
               />
             </template>
+            <el-menu-item index="2" @click="toUserInfo">
+              使用者資訊
+            </el-menu-item>
             <el-menu-item index="2" @click="logOut">
               登出
             </el-menu-item>

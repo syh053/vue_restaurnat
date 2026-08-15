@@ -3,13 +3,22 @@
 import { Icon } from "@iconify/vue"
 import Aside from "@/view/front/components/Aside.vue"
 import { useRouter } from "vue-router"
+import { useUserStore } from "@/stores/user.ts"
 
 /* 導航 */
 const router = useRouter()
 
+/* 初始化 Store */
+const userStore = useUserStore()
+
 /* 切換至餐廳列表 */
 const handleToRestaurantList = async () => {
   await router.push({name: 'frontRestaurant'})
+}
+
+/* 切換至後台餐廳列表 */
+const handleToEndRestaurantList = async () => {
+  await router.push({name: 'endRestaurantAll'})
 }
 </script>
 
@@ -20,7 +29,11 @@ const handleToRestaurantList = async () => {
         <el-menu class="custom-menu">
           <el-menu-item class="justify-center" index="1" @click="handleToRestaurantList">
             <Icon icon="material-symbols:restaurant" width="24" height="24" />
-            餐廳列表
+            前台餐廳列表
+          </el-menu-item>
+          <el-menu-item v-if="userStore.userInfo?.is_admin" class="justify-center" index="1" @click="handleToEndRestaurantList">
+            <Icon icon="hugeicons:manager" width="24" height="24" />
+            後台餐廳列表
           </el-menu-item>
         </el-menu>
       </template>

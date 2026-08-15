@@ -8,6 +8,7 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 import type { restaurantCommentAdd, restaurantCommentDelete } from "@/api/comment/type.ts"
 import { useUserStore } from "@/stores/user.ts"
 import { ElMessageBox } from "element-plus"
+import { useRouter } from "vue-router"
 
 
 /* 設定時間區域 */
@@ -20,6 +21,9 @@ const formatRelativeTime = (date: string) => {
 
 /* 初始化 Store */
 const userStore = useUserStore()
+
+/* 導航 */
+const router = useRouter()
 
 /* Props */
 const props = defineProps<{
@@ -54,7 +58,7 @@ const showDialog = defineModel<boolean>({default: false})
 /* 關閉餐廳詳細察看畫面 */
 const closeDialog = () => {
   // 更新網址
-  window.history.pushState({}, '', `/front/restaurant/all`)
+  router.back()
 
   showDialog.value = false
 }
@@ -101,9 +105,9 @@ const handleDeleteComment = async (comment: any) => {
     comments.value = await getCommentData(props.restaurant!.id)
   } catch (error) {
     if (error instanceof Error) {
-      console.error("發生錯誤：", error.message);
+      console.error("發生錯誤：", error.message)
     } else {
-      console.error("發生未知錯誤：", error);
+      console.error("發生未知錯誤：", error)
     }
   } finally {
     console.log("處理完成")
