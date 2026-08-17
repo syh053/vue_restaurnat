@@ -147,7 +147,7 @@ const handleDeleteComment = async (comment: any) => {
         <div class="comment-container">
           <div class="comments" v-for="comment in comments" :key="comment.id">
             <p class="comment-block">
-              <a class="user-name"><strong>{{ comment.user_name }}</strong></a>
+              <a><strong>{{ comment.user_name }}</strong></a>
               <span>{{ comment.comment }}</span>
               <el-button class="delete-btn" v-if="userStore.userInfo?.is_admin" type="danger" link
                          @click="handleDeleteComment(comment)">刪除
