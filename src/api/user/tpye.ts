@@ -15,5 +15,11 @@ export interface UserInfo {
     id: string
     name: string
     email: string
+    img: string
     is_admin: boolean
+}
+
+export interface UserInfoUpdate {
+    name: string
+    email: string
 }

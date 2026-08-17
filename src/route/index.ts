@@ -29,6 +29,11 @@ const routes: RouteRecordRaw[] = [
       component: () => import('@/view/user_info/UserInfo.vue')
     },
     {
+        path: '/user/info-update',
+        name: 'userInfoUpdate',
+        component: () => import('@/view/user_info/UserInfoUpdate.vue')
+    },
+    {
         path: '/front/restaurant',
         name: 'frontRestaurant',
         component: () => import('@/view/front/FrontRestaurant.vue'),

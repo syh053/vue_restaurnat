@@ -1,23 +1,36 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue"
-import { getUserInfoApi } from "@/api/user"
-import type { EndRestaurantList } from "@/api/end_restaurant/type.ts"
+import {onMounted, ref} from "vue"
+import {getUserInfoApi, updateUserInfoImageApi} from "@/api/user"
+import type {EndRestaurantList} from "@/api/end_restaurant/type.ts"
 import FrontRestaurantView from "@/view/front/components/FrontRestaurantView.vue"
-import { Plus } from "@element-plus/icons-vue"
+import {Plus} from "@element-plus/icons-vue"
+import {useRouter} from "vue-router";
+import {ElMessageBox, type UploadFile} from "element-plus";
 
+/* 導航 */
+const router = useRouter()
 
 /* 資訊 */
 const userData = ref<any>(null)
 const restaurantInfo = ref<EndRestaurantList>()
+const loading = ref<boolean>(true)
 
 /* Dialog 控制 */
 const showDialog = ref<boolean>(false)
 
 /* DOM 載入完畢後執行 */
 onMounted(async () => {
-  const {data} = await getUserInfoApi()
-  userData.value = data
-  console.log('使用者資訊 :', userData.value)
+  try {
+    const {data} = await getUserInfoApi()
+    userData.value = data
+  } catch (e) {
+    await ElMessageBox.alert('尚未登入無法查看使用者資訊', '提示', {
+      confirmButtonText: '返回'
+    })
+    await router.push({name: 'logIn'})
+  } finally {
+    loading.value = false
+  }
 })
 
 /* 顯示餐廳詳細頁面 */
@@ -32,12 +45,26 @@ const handleToDetail = (restaurant: EndRestaurantList) => {
 /* 前往使用者編輯頁面 */
 const updateUserInfo = () => {
   disabled.value = !disabled.value
+
+  router.push({name: 'userInfoUpdate'})
 }
 
 /* 圖片功能 */
 const disabled = ref<boolean>(false)
-const handleImageChange = () => {
+const handleImageChange = async (uploadFile: UploadFile) => {
   console.log('更換圖片')
+  if (!uploadFile.raw) return
+
+  const isJPGorPNG = uploadFile.raw.type === 'image/jpeg' || uploadFile.raw.type === 'image/png'
+
+  const isLt10M = uploadFile.raw.size / 1024 / 1024 < 10
+
+  if (!isJPGorPNG || !isLt10M) return false
+
+  await updateUserInfoImageApi(uploadFile.raw)
+
+  const {data} = await getUserInfoApi()
+  userData.value = data
 }
 
 const displayImage = ref<string>('https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png')
@@ -53,6 +80,7 @@ const API_BASE_URL = import.meta.env.VITE_API_URL
 
         <div class="">
           <el-upload
+              v-if="!loading"
               class="avatar-uploader"
               action="#"
               :show-file-list="false"
@@ -62,17 +90,16 @@ const API_BASE_URL = import.meta.env.VITE_API_URL
           >
             <img
                 v-if="displayImage"
-                :src="displayImage"
+                :src="userData?.image ? API_BASE_URL + userData.image : displayImage"
                 alt="使用者封面照"
                 class="user-img"
                 :class="{ 'hover:opacity-80': !disabled }"
                 style="max-height: 350px;"
             >
             <el-icon v-else class="avatar-uploader-icon">
-              <Plus />
+              <Plus/>
             </el-icon>
           </el-upload>
-          <small v-if="!disabled" class="text-gray-400 mt-2">點擊圖片可更換新照片</small>
         </div>
 
         <div class="flex flex-col justify-center items-start">
@@ -82,7 +109,8 @@ const API_BASE_URL = import.meta.env.VITE_API_URL
       </div>
 
       <div class="w-1/2 mt-5">
-        <el-button class="update-info-button w-full sm:w-auto" size="large" @click="updateUserInfo">編輯個人檔案</el-button>
+        <el-button class="update-info-button w-full sm:w-auto" size="large" @click="updateUserInfo">編輯個人檔案
+        </el-button>
       </div>
     </div>
 
@@ -101,43 +129,13 @@ const API_BASE_URL = import.meta.env.VITE_API_URL
     </div>
   </div>
 
-  <FrontRestaurantView v-if="showDialog" v-model="showDialog" :restaurant="restaurantInfo" />
+  <FrontRestaurantView v-if="showDialog" v-model="showDialog" :restaurant="restaurantInfo"/>
 </template>
 
 <style scoped lang="scss">
 p {
   text-align: left;
   margin: 10px 0;
-}
-
-.user-container {
-  width: 92%;
-  max-width: 1100px;
-  height: 100%;
-  padding: 1.5em 1em;
-}
-
-.user-img {
-  width: clamp(80px, 10vw, 130px);
-  height: clamp(80px, 10vw, 130px);
-  flex-shrink: 0;
-  object-fit: cover;
-  border: 2px solid #1f2028;
-  border-radius: 50%;
-}
-
-.user-name {
-  font-size: clamp(20px, 4vw, 36px);
-  line-height: 1.2;
-  word-break: break-word;
-  overflow-wrap: anywhere;
-}
-
-.update-info-button {
-  height: auto;
-  padding: 10px 20px;
-  font-size: 1em;
-  border-radius: 12px;
 }
 
 .grid {

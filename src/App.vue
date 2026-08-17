@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { userLogOutApi } from "@/api/user"
 import { useRoute, useRouter } from "vue-router"
-import { computed } from "vue"
+import {computed, ref} from "vue"
 
 /* 導航 */
 const router = useRouter()
@@ -21,6 +21,9 @@ const backTOHome = () => {
   router.push({name: 'frontRestaurant'})
 }
 
+/* menu 選單 */
+const activeIndex = ref('0')
+
 /* 前往使用者資訊頁面 */
 const toUserInfo = async () => {
   await router.push({name: 'userInfo'})
@@ -33,9 +36,10 @@ const toUserInfo = async () => {
       <div>
         <el-menu
             class="el-menu-demo flex justify-between"
+            :default-active="activeIndex"
             mode="horizontal"
         >
-          <el-menu-item @click="backTOHome">
+          <el-menu-item index="1" @click="backTOHome">
             <img
                 style="height: 50px"
                 src="https://upload.wikimedia.org/wikipedia/commons/4/4b/McDonald%27s_logo.svg"
@@ -51,10 +55,10 @@ const toUserInfo = async () => {
                   src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
               />
             </template>
-            <el-menu-item index="2" @click="toUserInfo">
+            <el-menu-item index="2-1" @click="toUserInfo">
               使用者資訊
             </el-menu-item>
-            <el-menu-item index="2" @click="logOut">
+            <el-menu-item index="2-2" @click="logOut">
               登出
             </el-menu-item>
           </el-sub-menu>

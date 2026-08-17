@@ -7,6 +7,8 @@
 
 
   <div class="pt-(--start-space) w-full">
+
+    <!-- 登入頁面圖片 -->
     <div
         class="bg-[url(https://hips.hearstapps.com/hmg-prod/images/486cec61-814b-4c76-a41c-f19efa80a688-686e5b6b1ccb5.jpg)] bg-cover bg-center aspect-video w-[50%] mx-auto"
     />
