@@ -90,7 +90,7 @@ const API_BASE_URL = import.meta.env.VITE_API_URL
            v-infinite-scroll="loadData"
            :infinite-scroll-disabled="disabled"
            :infinite-scroll-distance="20">
-    <div class="grid grid-cols-[repeat(auto-fit,minmax(700px,1fr))] gap-4 mt-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
       <el-card class="w-full clickable-card" v-for="(item) in tableData" :key="item.id" @click="handleToDetail(item)">
         <template #header>
           <div class="card-header">
