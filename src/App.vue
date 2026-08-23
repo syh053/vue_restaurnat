@@ -1,11 +1,14 @@
 <script setup lang="ts">
-import { userLogOutApi } from "@/api/user"
+import { useUserStore } from "@/stores/user.ts"
+import { computed, ref } from "vue"
 import { useRoute, useRouter } from "vue-router"
-import {computed, ref} from "vue"
 
 /* 導航 */
 const router = useRouter()
 const headerRoute = useRoute()
+
+/* 初始化 Store */
+const userStore = useUserStore()
 
 /* 是否顯示 Header */
 const showHeader = computed(() => {
@@ -13,12 +16,12 @@ const showHeader = computed(() => {
 })
 
 const logOut = async () => {
-  await userLogOutApi()
-  await router.push({name: 'logIn'})
+  await userStore.logout()
+  await router.push({ name: 'logIn' })
 }
 
 const backTOHome = () => {
-  router.push({name: 'frontRestaurant'})
+  router.push({ name: 'frontRestaurant' })
 }
 
 /* menu 選單 */
@@ -26,34 +29,32 @@ const activeIndex = ref('0')
 
 /* 前往使用者資訊頁面 */
 const toUserInfo = async () => {
-  await router.push({name: 'userInfo'})
+  await router.push({ name: 'userInfo' })
 }
+
+// 取得圖片前綴
+const API_BASE_URL = import.meta.env.VITE_API_URL
 </script>
 
 <template>
   <el-container class="h-screen w-full">
     <el-header v-if="showHeader" class="fixed top-0 left-0 right-0 h-(--header-height) z-9999">
       <div>
-        <el-menu
-            class="el-menu-demo flex justify-between"
-            :default-active="activeIndex"
-            mode="horizontal"
-        >
+        <el-menu class="el-menu-demo flex justify-between" :default-active="activeIndex" mode="horizontal">
           <el-menu-item index="1" @click="backTOHome">
-            <img
-                style="height: 50px"
-                src="https://upload.wikimedia.org/wikipedia/commons/4/4b/McDonald%27s_logo.svg"
-                alt="Element logo"
-            />
+            <img style="height: 50px" src="https://upload.wikimedia.org/wikipedia/commons/4/4b/McDonald%27s_logo.svg"
+              alt="Element logo" />
           </el-menu-item>
 
           <el-sub-menu index="2">
             <template #title>
               <el-avatar
-                  :size="32"
-                  class="mr-3"
-                  src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
+              :size="32"
+              class="mr-3"
+              :src="userStore.userInfo?.image ? API_BASE_URL + userStore.userInfo.image
+                : 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png'"
               />
+              <span>{{ userStore.userInfo?.name }}</span>
             </template>
             <el-menu-item index="2-1" @click="toUserInfo">
               使用者資訊
@@ -71,6 +72,4 @@ const toUserInfo = async () => {
 </template>
 
 
-<style scoped>
-
-</style>
+<style scoped></style>

@@ -1,14 +1,18 @@
 <script setup lang="ts">
-import {onMounted, ref} from "vue"
-import {getUserInfoApi, updateUserInfoImageApi} from "@/api/user"
-import type {EndRestaurantList} from "@/api/end_restaurant/type.ts"
+import type { EndRestaurantList } from "@/api/end_restaurant/type.ts"
+import { updateUserInfoImageApi } from "@/api/user"
+import { useUserStore } from "@/stores/user.ts"
 import FrontRestaurantView from "@/view/front/components/FrontRestaurantView.vue"
-import {Plus} from "@element-plus/icons-vue"
-import {useRouter} from "vue-router";
-import {ElMessageBox, type UploadFile} from "element-plus";
+import { Plus } from "@element-plus/icons-vue"
+import { ElMessageBox, type UploadFile } from "element-plus"
+import { onMounted, ref } from "vue"
+import { useRouter } from "vue-router"
 
 /* 導航 */
 const router = useRouter()
+
+/* 初始化 Store */
+const userStore = useUserStore()
 
 /* 資訊 */
 const userData = ref<any>(null)
@@ -21,7 +25,7 @@ const showDialog = ref<boolean>(false)
 /* DOM 載入完畢後執行 */
 onMounted(async () => {
   try {
-    const {data} = await getUserInfoApi()
+    const {data} = await userStore.fetchUserInfo()
     userData.value = data
   } catch (e) {
     await ElMessageBox.alert('尚未登入無法查看使用者資訊', '提示', {
@@ -52,7 +56,6 @@ const updateUserInfo = () => {
 /* 圖片功能 */
 const disabled = ref<boolean>(false)
 const handleImageChange = async (uploadFile: UploadFile) => {
-  console.log('更換圖片')
   if (!uploadFile.raw) return
 
   const isJPGorPNG = uploadFile.raw.type === 'image/jpeg' || uploadFile.raw.type === 'image/png'
@@ -63,7 +66,7 @@ const handleImageChange = async (uploadFile: UploadFile) => {
 
   await updateUserInfoImageApi(uploadFile.raw)
 
-  const {data} = await getUserInfoApi()
+  const {data} = await userStore.fetchUserInfo()
   userData.value = data
 }
 
