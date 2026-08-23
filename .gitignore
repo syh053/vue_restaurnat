@@ -12,6 +12,9 @@ dist
 dist-ssr
 *.local
 
+# 不要提交 CLAUDE.md
+CLAUDE.md
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

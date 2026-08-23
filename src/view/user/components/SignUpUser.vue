@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { reactive, ref } from "vue"
 import { getEmailExistedCheckApi, getUserExistedCheckApi, postUserApi } from "@/api/user"
-import type { FormInstance, FormRules } from "element-plus"
 import type { UserPost } from "@/api/user/tpye.ts"
+import type { FormInstance, FormRules } from "element-plus"
+import { reactive, ref } from "vue"
 import { useRouter } from "vue-router"
 
 /* 導航 */
@@ -25,6 +25,12 @@ const form = reactive<UserPost>({
 })
 
 const ruleFormRef = ref<FormInstance>()
+
+/* Floating label focus 狀態 */
+const nameFocused = ref(false)
+const emailFocused = ref(false)
+const passwordFocused = ref(false)
+const confirmPasswordFocused = ref(false)
 
 // 檢查使用者名稱是否已註冊
 const validateUsername = (_rule: any, value: any, callback: any) => {
@@ -109,31 +115,66 @@ const jumpSignIn = async () => {
 
 <template>
   <!-- 表單 -->
-  <div class="px-5 my-5 md:bg-white">
+    <div class="px-5 my-5 w-full max-w-3xl mx-auto md:bg-white">
     <h3 class="mt-10 text-2xl font-bold text-center">註冊</h3>
 
     <el-form
-        class="mx-auto mt-5"
+        class="mx-auto mt-5 w-full"
         ref="ruleFormRef"
         :model="form"
         :rules="rules"
         label-width="auto"
-        style="max-width: 600px"
     >
-      <el-form-item label="使用者名稱" prop="name" required>
-        <el-input v-model="form.name" placeholder="輸入名稱" />
+      <el-form-item prop="name">
+        <div class="floating-field">
+          <el-input
+              v-model="form.name"
+              placeholder=""
+              @focus="nameFocused = true"
+              @blur="nameFocused = false"
+          />
+          <label class="floating-label" :class="{ 'is-float': nameFocused || form.name }">使用者名稱</label>
+        </div>
       </el-form-item>
 
-      <el-form-item label="email" prop="email" required>
-        <el-input v-model="form.email" placeholder="輸入信箱" />
+      <el-form-item prop="email">
+        <div class="floating-field">
+          <el-input
+              v-model="form.email"
+              placeholder=""
+              @focus="emailFocused = true"
+              @blur="emailFocused = false"
+          />
+          <label class="floating-label" :class="{ 'is-float': emailFocused || form.email }">email</label>
+        </div>
       </el-form-item>
 
-      <el-form-item label="密碼" prop="password" required>
-        <el-input type="password" v-model="form.password" placeholder="輸入密碼" show-password />
+      <el-form-item prop="password">
+        <div class="floating-field">
+          <el-input
+              type="password"
+              v-model="form.password"
+              placeholder=""
+              show-password
+              @focus="passwordFocused = true"
+              @blur="passwordFocused = false"
+          />
+          <label class="floating-label" :class="{ 'is-float': passwordFocused || form.password }">密碼</label>
+        </div>
       </el-form-item>
 
-      <el-form-item label="確認密碼" prop="confirm_password" required>
-        <el-input type="password" v-model="form.confirm_password" placeholder="確認密碼" show-password />
+      <el-form-item prop="confirm_password">
+        <div class="floating-field">
+          <el-input
+              type="password"
+              v-model="form.confirm_password"
+              placeholder=""
+              show-password
+              @focus="confirmPasswordFocused = true"
+              @blur="confirmPasswordFocused = false"
+          />
+          <label class="floating-label" :class="{ 'is-float': confirmPasswordFocused || form.confirm_password }">確認密碼</label>
+        </div>
       </el-form-item>
 
       <el-form-item>
@@ -147,5 +188,28 @@ const jumpSignIn = async () => {
 </template>
 
 <style scoped>
+.floating-field {
+  position: relative;
+  width: 100%;
+  margin-top: 14px;
+}
 
+.floating-label {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  color: #a8abb2;
+  pointer-events: none;
+  transition: all 0.15s ease;
+}
+
+.floating-label.is-float {
+  top: -20px;
+  left: 0;
+  transform: translateY(0);
+  font-size: 12px;
+  color: var(--el-color-primary);
+}
 </style>

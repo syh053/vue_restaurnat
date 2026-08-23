@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { reactive, ref } from "vue"
-import type { FormInstance, FormRules } from "element-plus"
 import type { UserLogIn } from "@/api/user/tpye.ts"
-import { useRouter } from "vue-router"
 import { useUserStore } from "@/stores/user.ts"
+import type { FormInstance, FormRules } from "element-plus"
+import { reactive, ref } from "vue"
+import { useRouter } from "vue-router"
 
 /* 導航 */
 const router = useRouter()
@@ -23,6 +23,10 @@ const rules = reactive<FormRules<UserLogIn>>({
   name: [{required: true, message: "請輸入名稱", trigger: "change"}],
   password: [{required: true, message: "請輸入密碼", trigger: "change"}],
 })
+
+/* Floating label focus 狀態 */
+const nameFocused = ref(false)
+const passwordFocused = ref(false)
 
 /* 登入 */
 const onSubmit = async (formEl: FormInstance | undefined) => {
@@ -47,23 +51,40 @@ const jumpSignUp = async () => {
 
 <template>
   <!-- 表單 -->
-  <div class="px-5 my-5 md:bg-white">
+  <div class="px-5 my-5 w-full max-w-3xl mx-auto md:bg-white">
     <h3 class="mt-10 text-2xl font-bold text-center">登入</h3>
 
     <el-form
-        class="mx-auto mt-5"
+        class="mx-auto mt-5 w-full"
         ref="ruleFormRef"
         :model="form"
         :rules="rules"
         label-width="auto"
-        style="max-width: 600px"
     >
-      <el-form-item label="使用者名稱" prop="name" required>
-        <el-input v-model="form.name" placeholder="輸入名稱" />
+      <el-form-item prop="name">
+        <div class="floating-field">
+          <el-input
+              v-model="form.name"
+              placeholder=""
+              @focus="nameFocused = true"
+              @blur="nameFocused = false"
+          />
+          <label class="floating-label" :class="{ 'is-float': nameFocused || form.name }">使用者名稱</label>
+        </div>
       </el-form-item>
 
-      <el-form-item label="密碼" prop="password" required>
-        <el-input type="password" v-model="form.password" placeholder="輸入密碼" show-password />
+      <el-form-item prop="password">
+        <div class="floating-field">
+          <el-input
+              type="password"
+              v-model="form.password"
+              placeholder=""
+              show-password
+              @focus="passwordFocused = true"
+              @blur="passwordFocused = false"
+          />
+          <label class="floating-label" :class="{ 'is-float': passwordFocused || form.password }">密碼</label>
+        </div>
       </el-form-item>
 
       <el-form-item>
@@ -77,5 +98,28 @@ const jumpSignUp = async () => {
 </template>
 
 <style scoped>
+.floating-field {
+  position: relative;
+  width: 100%;
+  margin-top: 14px;
+}
 
+.floating-label {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  color: #a8abb2;
+  pointer-events: none;
+  transition: all 0.15s ease;
+}
+
+.floating-label.is-float {
+  top: -20px;
+  left: 0;
+  transform: translateY(0);
+  font-size: 12px;
+  color: var(--el-color-primary);
+}
 </style>
