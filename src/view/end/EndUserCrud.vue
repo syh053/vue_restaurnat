@@ -3,11 +3,12 @@
 import PageTable, { type ContextMenuOption } from "@/components/PageTable.vue"
 import { useRouter } from "vue-router"
 import { deleteUserApi, getUserApi, updateUserAccessApi } from "@/api/end_user"
-import Aside from "@/view/front/components/Aside.vue"
+
 import { reactive, ref, useTemplateRef } from "vue"
 import { type UpdateUser, type User, type UserSearch, userStatusOptions } from "@/api/end_user/type.ts"
 import { ElMessageBox } from "element-plus"
 import type { EndRestaurantList } from "@/api/end_restaurant/type.ts"
+import Aside from "@/components/Aside.vue"
 
 /* 導航 */
 const router = useRouter()

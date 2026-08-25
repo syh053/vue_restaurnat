@@ -177,7 +177,7 @@ const onCrudUpdated = () => {
       <el-table-column prop="name" label="名稱" width="350" />
       <el-table-column prop="category_name" label="分類" width="150" />
       <el-table-column prop="tel" label="電話" width="200" />
-      <el-table-column prop="address" label="地址" />
+      <el-table-column prop="address" label="地址" width="430" />
     </template>
   </PageTable>
 

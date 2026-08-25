@@ -3,7 +3,7 @@ import { useRouter } from "vue-router"
 import { Icon } from '@iconify/vue'
 import { ref } from "vue"
 import EndRestaurantCrud from "@/view/end/components/EndRestaurantCRUD.vue"
-import Aside from "@/view/end/components/Aside.vue"
+import Aside from "@/components/Aside.vue"
 
 
 /* 導航 */

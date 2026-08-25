@@ -1,9 +1,10 @@
 <script setup lang="ts">
 
 import { useUserStore } from "@/stores/user.ts"
-import Aside from "@/view/front/components/Aside.vue"
+
 import { Icon } from "@iconify/vue"
 import { useRouter } from "vue-router"
+import Aside from "@/components/Aside.vue"
 
 /* 導航 */
 const router = useRouter()
@@ -31,7 +32,8 @@ const handleToEndRestaurantList = async () => {
             <Icon icon="material-symbols:restaurant" width="24" height="24" />
             前台餐廳列表
           </el-menu-item>
-          <el-menu-item v-if="userStore.userInfo?.is_admin" class="justify-center" index="2" @click="handleToEndRestaurantList">
+          <el-menu-item v-if="userStore.userInfo?.is_admin" class="justify-center" index="2"
+                        @click="handleToEndRestaurantList">
             <Icon icon="hugeicons:manager" width="24" height="24" />
             後台餐廳列表
           </el-menu-item>
