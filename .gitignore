@@ -15,6 +15,9 @@ dist-ssr
 # 不要提交 CLAUDE.md
 CLAUDE.md
 
+# 不要提交 Vue 專案中工具自動產生的 TypeScript 型別宣告檔
+components.d.ts
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

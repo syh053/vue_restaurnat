@@ -161,7 +161,7 @@ const onCrudUpdated = () => {
         <el-input v-model="formInline.tel" placeholder="模糊查詢" clearable />
       </el-form-item>
       <el-form-item label=營業時長>
-        <el-input v-model.number="formInline.openingHours" placeholder="模糊查詢sss" clearable />
+        <el-input v-model.number="formInline.openingHours" placeholder="模糊查詢" clearable />
       </el-form-item>
       <el-form-item label=地址>
         <el-input v-model="formInline.address" placeholder="模糊查詢" clearable />

@@ -292,4 +292,34 @@ p {
 .delete-btn {
   font-size: 1em;
 }
+
+/* 手機尺寸用 */
+@media (max-width: 640px) {
+  .feature-container {
+    height: auto;
+    flex-direction: column;
+  }
+
+  .feature-left {
+    flex: none;
+
+    img {
+      height: 200px;
+    }
+  }
+
+  .feature-right {
+    flex: none;
+    padding-left: 0;
+    padding-top: 1em;
+  }
+
+  p {
+    font-size: 1.1em;
+  }
+
+  hr {
+    margin: 1em 0;
+  }
+}
 </style>
