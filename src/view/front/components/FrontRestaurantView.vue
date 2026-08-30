@@ -55,6 +55,15 @@ watch(
 /* Dialog */
 const showDialog = defineModel<boolean>({default: false})
 
+/* 前往餐廳菜單頁面 */
+const goMenu = () => {
+  router.push({
+    name: 'frontRestaurantMenu',
+    params: { id: props.restaurant!.id },
+    query: { name: props.restaurant!.name }
+  })
+}
+
 /* 關閉餐廳詳細察看畫面 */
 const closeDialog = () => {
   // 更新網址
@@ -164,6 +173,7 @@ const handleDeleteComment = async (comment: any) => {
             <input id="comment-input" name="comment" v-model="inputText" placeholder="請輸入評論..." />
           </el-form-item>
           <el-form-item class="button">
+            <el-button type="primary" plain @click="goMenu">查看菜單</el-button>
             <button class="btn btn-ghost" @click.prevent="onSubmit">送出</button>
           </el-form-item>
         </el-form>
@@ -294,7 +304,7 @@ p {
 }
 
 /* 手機尺寸用 */
-@media (max-width: 640px) {
+@media (max-width: 1024px) {
   .feature-container {
     height: auto;
     flex-direction: column;

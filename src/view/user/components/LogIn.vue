@@ -37,7 +37,7 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
 
     await userStore.login(form)
 
-    await router.push({ name: "frontRestaurant" })
+    await router.push({ name: "choosePage" })
   } catch (fields) {
     console.log("驗證失敗", fields)
   }
@@ -51,8 +51,8 @@ const jumpSignUp = async () => {
 
 <template>
   <!-- 表單 -->
-  <div class="px-5 my-5 w-full max-w-3xl mx-auto md:bg-white">
-    <h3 class="mt-10 text-2xl font-bold text-center">登入</h3>
+  <div class="px-5 my-5 w-full max-w-3xl mx-auto">
+    <h3 class="mt-10 text-2xl font-bold text-center text-white">登入</h3>
 
     <el-form
         class="mx-auto mt-5 w-full"

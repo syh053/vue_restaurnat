@@ -115,8 +115,8 @@ const jumpSignIn = async () => {
 
 <template>
   <!-- 表單 -->
-    <div class="px-5 my-5 w-full max-w-3xl mx-auto md:bg-white">
-    <h3 class="mt-10 text-2xl font-bold text-center">註冊</h3>
+    <div class="px-5 my-5 w-full max-w-3xl mx-auto">
+    <h3 class="mt-10 text-2xl font-bold text-center text-white">註冊</h3>
 
     <el-form
         class="mx-auto mt-5 w-full"

@@ -33,7 +33,7 @@ const handleChangeAdmin = async (row: User) => {
   await updateUserAccessApi(updated_data)
 }
 
-/* 💡 宣告右鍵功能配置陣列 */
+/* 宣告右鍵功能配置陣列 */
 const multipleSelection = ref<string[]>([]) // 多選資料
 /* 勾選變更 */
 

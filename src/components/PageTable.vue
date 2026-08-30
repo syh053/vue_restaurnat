@@ -155,7 +155,10 @@ const handleBatchDeleteClick = () => {
 
 <template>
   <div v-if="showTable">
-    <h3 class="pt-5 text-2xl font-serif">{{ props.tableTitle }}</h3>
+    <div class="pt-5 flex items-center justify-center">
+      <h3 class="text-2xl font-serif">{{ props.tableTitle }}</h3>
+      <slot name="toolbar"/>
+    </div>
     <div class="w-full max-w-6xl border-2 rounded-xl m-6 mx-auto overflow-hidden">
       <div class="form-table border-b p-5 flex items-center">
         <el-form :inline="true" :model="formInline" class="demo-form-inline flex flex-wrap gap-x-5 gap-y-3">
@@ -178,7 +181,7 @@ const handleBatchDeleteClick = () => {
         <slot name="default"/>
       </el-table>
 
-      <div class="demo-pagination-block flex justify-end border-t py-3">
+      <div class="demo-pagination-block flex justify-end border-t py-3 overflow-x-auto">
         <el-pagination
             v-model:current-page="currentPage"
             v-model:page-size="pageSize"
@@ -214,6 +217,24 @@ const handleBatchDeleteClick = () => {
   }
 }
 
+/* 在手機版時避免被裁切 */
+.demo-pagination-block {
+  overflow-x: auto;
+}
+
+/* 手機排版，移除「總筆數 / 每頁筆數 / 跳頁」 */
+@media (max-width: 1024px) {
+  .demo-pagination-block {
+    justify-content: flex-start;
+  }
+
+  .demo-pagination-block :deep(.el-pagination__total),
+  .demo-pagination-block :deep(.el-pagination__sizes),
+  .demo-pagination-block :deep(.el-pagination__jumper) {
+    display: none;
+  }
+}
+
 /* 右鍵選單容器本體 */
 .context-menu {
   position: fixed;
@@ -226,7 +247,7 @@ const handleBatchDeleteClick = () => {
   min-width: 120px;
 }
 
-/* 💡 使用 :deep() 穿透到插槽內的 ul, li 與 divider */
+/* 使用 :deep() 穿透到插槽內的 ul, li 與 divider */
 .context-menu :deep(ul) {
   list-style: none;
   margin: 0;

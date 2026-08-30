@@ -3,11 +3,12 @@
 import { useUserStore } from "@/stores/user.ts"
 
 import { Icon } from "@iconify/vue"
-import { useRouter } from "vue-router"
+import {useRoute, useRouter} from "vue-router"
 import Aside from "@/components/Aside.vue"
 
 /* 導航 */
 const router = useRouter()
+const route = useRoute()
 
 /* 初始化 Store */
 const userStore = useUserStore()
@@ -25,7 +26,7 @@ const handleToEndRestaurantList = async () => {
 
 <template>
   <el-container>
-    <Aside>
+    <Aside v-if="!route.path.includes('/front/restaurant/menu')">
       <template #default>
         <el-menu class="custom-menu">
           <el-menu-item class="justify-center" index="1" @click="handleToRestaurantList">
