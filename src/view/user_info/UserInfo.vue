@@ -187,7 +187,7 @@ p {
 }
 
 /* 手機尺寸用 */
-@media (max-width: 640px) {
+@media (max-width: 1024px) {
   .hero, .card {
     padding: 16px;
   }

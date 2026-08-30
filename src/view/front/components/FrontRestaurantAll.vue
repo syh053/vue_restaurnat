@@ -5,11 +5,15 @@ import type { EndRestaurantList, EndRestaurantSearch } from "@/api/end_restauran
 
 import { ElMessageBox } from "element-plus"
 import { getFrontRestaurantApi } from "@/api/front_restaurant"
-import { useRouter } from "vue-router"
+import { useRoute, useRouter } from "vue-router"
 import FrontRestaurantView from "@/view/front/components/FrontRestaurantView.vue"
 
 /* 導航 */
 const router = useRouter()
+const route = useRoute()
+
+/* 詳細彈窗開啟中的餐廳快取 key（供從菜單頁返回時還原彈窗用） */
+const DETAIL_CACHE_KEY = 'frontRestaurantDetail'
 
 /* Dialog 控制 */
 const showDialog = ref<boolean>(false)
@@ -69,16 +73,39 @@ const handleToDetail = (item: EndRestaurantList) => {
   showDialog.value = true
   restaurantInfo.value = item
 
-  // 更新網址
+  // 快取餐廳資料，讓從菜單頁 router.back() 回來時能還原彈窗
+  sessionStorage.setItem(DETAIL_CACHE_KEY, JSON.stringify(item))
+
+  // 更新網址（帶上 id，作為彈窗開啟狀態的依據）
   router.push({
-    path: '/front/restaurant',
+    name: 'frontRestaurantAll',
     query: { id: item.id }
   })
 }
 
-// 初始化時直接執行第一次載入
+/* 若網址帶有餐廳 id（例如從菜單頁返回），還原詳細彈窗 */
+const restoreDetailFromQuery = () => {
+  const id = route.query.id
+  if (!id) return
+
+  const cached = sessionStorage.getItem(DETAIL_CACHE_KEY)
+  if (!cached) return
+
+  try {
+    const item = JSON.parse(cached) as EndRestaurantList
+    if (item.id !== id) return
+
+    restaurantInfo.value = item
+    showDialog.value = true
+  } catch {
+    // 快取資料損毀，忽略
+  }
+}
+
+// 初始化時直接執行第一次載入，並視情況還原詳細彈窗
 onMounted(() => {
   loadData()
+  restoreDetailFromQuery()
 })
 
 // 取得圖片前綴

@@ -5,6 +5,9 @@ import EndRestaurantCRUD from "@/view/end/components/EndRestaurantCRUD.vue"
 import type { Category, EndRestaurantList, EndRestaurantSearch } from "@/api/end_restaurant/type.ts"
 import { onMounted, reactive, ref, useTemplateRef } from "vue"
 import { ElMessageBox } from "element-plus"
+import { useRouter } from "vue-router"
+
+const router = useRouter()
 
 const tableRef = useTemplateRef('pageTable')
 
@@ -53,7 +56,7 @@ const handleSelectionChange = (list: EndRestaurantList[]) => {
   multipleSelection.value = list.map(item => item.name)
 }
 
-/* 💡 宣告右鍵功能配置陣列 */
+/* 宣告右鍵功能配置陣列 */
 const handleDelete = async (row?: EndRestaurantList) => {
   let targets: string[] = []
   let confirmMessage = ''
@@ -113,6 +116,13 @@ const menuConfigs = ref<ContextMenuOption[]>([
       showDialog.value = true
       showTitle.value = '編輯餐廳'
       editType.value = false
+    }
+  },
+  {
+    label: '管理菜單',
+    divided: true,
+    action: (row) => {
+      router.push({ name: 'endRestaurantMenu', params: { restaurantId: row.id }, query: { name: row.name } })
     }
   },
   {
