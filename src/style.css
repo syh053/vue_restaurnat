@@ -1,6 +1,12 @@
 @import "tailwindcss";
 
-@plugin "daisyui";
+/* 明確指定主題，避免第一次造訪跟隨系統偏好 */
+@plugin "daisyui" {
+    themes: light --default, dark;
+}
+
+/* dark mode 改用 class 策略（.dark），讓手動切換的 dark: utility 生效 */
+@custom-variant dark (&:where(.dark, .dark *));
 
 @layer base {
     body {
@@ -34,7 +40,7 @@
     hr {
         border: none; /* 清除瀏覽器預設樣式 */
         height: 1px; /* 設定線條粗細 */
-        background-color: rgba(0, 0, 0, 0.1); /* 最後一個數字 0.1 代表 10% 透明度，越小越淡 */
+        background-color: var(--border); /* 隨主題切換的分隔線顏色 */
     }
 }
 
@@ -52,7 +58,7 @@
 
     font: 18px/145% var(--sans);
     letter-spacing: 0.18px;
-    color-scheme: light dark;
+    color-scheme: light;
     color: var(--text);
     background: var(--bg);
     font-synthesis: none;
@@ -65,13 +71,13 @@
     }
 }
 
-@media (prefers-color-scheme: dark) {
-    :root {
-        --text: #9ca3af;
-        --text-h: #f3f4f6;
-        --bg: #16171d;
-        --border: #2e303a;
-    }
+/* 手動切換的深色主題（見 src/stores/theme.ts） */
+:root.dark {
+    --text: #9ca3af;
+    --text-h: #f3f4f6;
+    --bg: #16171d;
+    --border: #2e303a;
+    color-scheme: dark;
 }
 
 .el-header {
@@ -138,8 +144,8 @@
 .card {
     margin: 24px auto 0;
     padding: 24px;
-    background-color: #ffffff;
-    border: 1px solid #dee2e6;
+    background-color: var(--bg);
+    border: 1px solid var(--border);
     border-radius: 16px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 
