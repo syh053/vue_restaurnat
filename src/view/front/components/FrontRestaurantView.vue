@@ -226,6 +226,8 @@ const handleDeleteComment = async (comment: any) => {
   flex-direction: column;
   flex: 1.5;
   padding-left: 1em;
+  /* 讓內部的留言區能正確計算可用高度並出現捲軸 */
+  min-height: 0;
 }
 
 hr {
@@ -244,6 +246,10 @@ p {
 /* 留言區 */
 .comment-container {
   flex: 1;
+  /* 留言過多時在區塊內部捲動，而不是撐破 dialog */
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 0.5em;
 }
 
 .comments {
@@ -322,6 +328,11 @@ p {
     flex: none;
     padding-left: 0;
     padding-top: 1em;
+  }
+
+  /* 垂直排列時 feature-container 高度為 auto，改用固定上限讓留言區自行捲動 */
+  .comment-container {
+    max-height: 40vh;
   }
 
   p {

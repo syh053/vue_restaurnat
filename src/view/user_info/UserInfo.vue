@@ -148,10 +148,11 @@ p {
   gap: 16px;
 }
 
+/* 隨主題切換的顏色，一律用 src/style.css 定義的 CSS 變數（見 src/stores/theme.ts），不寫死色碼 */
 .hero,
 .card {
-  background: #ffffff;
-  border: 1px solid #dbe3ec;
+  background: var(--bg);
+  border: 1px solid var(--border);
   border-radius: 16px;
   box-shadow: 0 10px 28px rgb(33 53 71 / 8%);
   box-sizing: border-box;
@@ -168,8 +169,8 @@ p {
 }
 
 .restaurant-card {
-  background: #ffffff;
-  border: 1px solid #dbe3ec;
+  background: var(--bg);
+  border: 1px solid var(--border);
   border-radius: 16px;
   box-shadow: 0 10px 28px rgb(33 53 71 / 8%);
   overflow: hidden; /* 切掉超出圓角的圖片 */
