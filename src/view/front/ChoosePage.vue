@@ -12,7 +12,7 @@ const handleToFrontRestaurantAll = async () => {
 }
 
 const handleToFrontRestaurantMenu = async () => {
-  await router.push({name: 'notFound'})
+  await router.push({name: 'frontRestaurantMenuAll'})
 }
 </script>
 

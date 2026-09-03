@@ -20,7 +20,11 @@
       </div>
 
       <!-- 表單區塊：lg 以上固定寬 650px（lg:flex-none），畫面縮小維持不變；小於 lg 時全寬並讓欄位垂直/水平置中 -->
-      <div class="w-full flex-1 lg:flex-none lg:w-[650px] flex items-center justify-center bg-olive-900 px-5 lg:px-0 border-l border-gray-600">
+      <div class="w-full flex-1 lg:flex-none lg:w-[650px] flex flex-col items-center justify-center bg-olive-900 px-5 lg:px-0 border-l border-gray-600">
+        <div class="lg:hidden" style="width: 150px">
+          <img src="https://i.urusai.cc/rDCqj.png" alt="餐廳評論網logo">
+        </div>
+
         <router-view />
       </div>
     </div>

@@ -49,6 +49,11 @@ const routes: RouteRecordRaw[] = [
                 component: () => import('@/view/front/components/FrontRestaurantAll.vue')
             },
             {
+                path: 'menu-all',
+                name: 'frontRestaurantMenuAll',
+                component: () => import('@/view/front/components/FrontRestaurantMenuAll.vue')
+            },
+            {
                 path: 'detail/:id',
                 name: 'frontRestaurantDetail',
                 component: () => import('@/view/front/components/FrontRestaurantView.vue')

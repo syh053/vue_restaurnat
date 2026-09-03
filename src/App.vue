@@ -45,7 +45,7 @@ const API_BASE_URL = import.meta.env.VITE_API_URL
       <div>
         <el-menu class="el-menu-demo flex justify-between" :default-active="activeIndex" mode="horizontal">
           <el-menu-item index="1" @click="backTOHome">
-            <img style="height: 50px" src="https://upload.wikimedia.org/wikipedia/commons/4/4b/McDonald%27s_logo.svg"
+            <img style="height: 50px" src="https://i.urusai.cc/rDCqj.png"
               alt="Element logo" />
           </el-menu-item>
 
