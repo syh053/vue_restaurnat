@@ -3,10 +3,11 @@
 import { computed, onMounted, reactive, ref } from "vue"
 import type { Category, EndRestaurantList, EndRestaurantSearch } from "@/api/end_restaurant/type.ts"
 
-import { ElMessageBox } from "element-plus"
-import { getFrontRestaurantApi } from "@/api/front_restaurant"
-import { get_categoryApi } from "@/api/end_restaurant"
+import { ElMessage, ElMessageBox } from "element-plus"
+import { get_categoryApi, getFrontRestaurantApi } from "@/api/front_restaurant"
+
 import { useRouter } from "vue-router"
+import { WarningFilled } from "@element-plus/icons-vue"
 
 /* 導航 */
 const router = useRouter()
@@ -71,17 +72,25 @@ const handleSearch = async () => {
 const goMenu = (item: EndRestaurantList) => {
   router.push({
     name: 'frontRestaurantMenu',
-    params: { id: item.id },
-    query: { name: item.name }
+    params: {id: item.id},
+    query: {name: item.name}
   })
 }
 
 // 初始化時載入分類選項與第一頁餐廳資料
 onMounted(async () => {
-  const category_res = await get_categoryApi()
-  categoryData.value = category_res.data
-
-  await loadData()
+  try {
+    const category_res = await get_categoryApi()
+    categoryData.value = category_res.data
+    await loadData()
+  } catch (error) {
+    console.error(error)
+    if (error instanceof Error) {
+      ElMessage.error({message: '無法載入分類選項', icon: WarningFilled, offset: 80})
+    } else {
+      ElMessage.error({message: '無法載入分類選項', icon: WarningFilled, offset: 80})
+    }
+  }
 })
 
 // 取得圖片前綴
@@ -99,7 +108,7 @@ const API_BASE_URL = import.meta.env.VITE_API_URL
         <el-input v-model="formInline.name" placeholder="模糊查詢" clearable @keyup.enter="handleSearch" />
       </el-form-item>
       <el-form-item label="分類">
-        <el-select v-model="formInline.category_name" placeholder="全部" clearable class="w-40">
+        <el-select v-model="formInline.category_name" placeholder="全部" clearable style="width: 200px">
           <el-option
               v-for="category in categoryData"
               :key="category.id"
