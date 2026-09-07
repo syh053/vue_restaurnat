@@ -46,9 +46,8 @@
     /* 依視窗寬度動態調整：最小 2rem、理想 4vw、最大 3.5rem */
     font-size: clamp(2rem, 3.1vw, 3.5rem);
     line-height: 1.3;
-    background: linear-gradient(to right, #ff0000, #0000ff);
     background-clip: text;
-    color: transparent;
+    color: azure;
     margin-bottom: 0.3em;
   }
 </style>

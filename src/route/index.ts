@@ -68,6 +68,11 @@ const routes: RouteRecordRaw[] = [
 
     },
     {
+        path: '/front/cart',
+        name: 'frontCart',
+        component: () => import('@/view/front/FrontCart.vue')
+    },
+    {
         path: '/end/restaurant',
         name: 'endRestaurant',
         component: () => import('@/view/end/EndRestaurant.vue'),

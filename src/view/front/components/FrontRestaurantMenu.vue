@@ -2,11 +2,12 @@
 
 import { computed, onMounted, ref } from "vue"
 import { useRoute, useRouter } from "vue-router"
-import { ElMessageBox } from "element-plus"
+import { ElMessage, ElMessageBox } from "element-plus"
 import { Icon } from "@iconify/vue"
 import Aside from "@/components/Aside.vue"
 import { getFrontMenuApi } from "@/api/menu"
 import type { MenuItem } from "@/api/menu/type.ts"
+import { useCartStore } from "@/stores/cart.ts"
 
 /* 導航 */
 const route = useRoute()
@@ -16,9 +17,16 @@ const router = useRouter()
 const restaurantId = route.params.id as string
 const restaurantName = (route.query.name as string) || '餐廳'
 
+/* 初始化 Store */
+const cartStore = useCartStore()
+
 /* 資料 */
 const menuList = ref<MenuItem[]>([])
 const loading = ref<boolean>(true)
+
+/* 每個餐點的加入數量（key 為 menu_item id），以及正在加入的餐點 id */
+const qtyMap = ref<Record<string, number>>({})
+const addingId = ref<string | null>(null)
 
 /* 依分區分組（後端已依 section, name 排序） */
 const grouped = computed(() => {
@@ -71,10 +79,53 @@ const onScroll = (e: Event) => {
   activeSection.value = current
 }
 
+/* 加入購物車 */
+const handleAddToCart = async (item: MenuItem) => {
+  const quantity = qtyMap.value[item.id] ?? 1
+  addingId.value = item.id
+
+  try {
+    await cartStore.addItem({ menu_item_id: item.id, quantity })
+    ElMessage.success('已加入購物車')
+  } catch (err: any) {
+    const status = err?.response?.status
+    const message: string = err?.response?.data?.message ?? ''
+
+    if (status === 418 && message.includes('其他餐廳')) {
+      // 購物車已有其他餐廳的餐點，詢問是否清空後改加入
+      try {
+        await ElMessageBox.confirm('購物車內已有其他餐廳的餐點，是否清空並改加入此餐點?', '切換餐廳', {
+          confirmButtonText: '清空並加入',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+
+        await cartStore.addItem({ menu_item_id: item.id, quantity }, true)
+        ElMessage.success('已清空購物車並加入')
+      } catch (retryErr: any) {
+        if (retryErr !== 'cancel' && retryErr !== 'close') {
+          ElMessage.error(retryErr?.response?.data?.message || '加入購物車失敗')
+        }
+      }
+    } else if (status === 401) {
+      await ElMessageBox.alert('尚未登入無法加入購物車', '提示', {
+        confirmButtonText: '返回'
+      })
+      await router.push({ name: 'logIn' })
+    } else {
+      ElMessage.error(message || '加入購物車失敗')
+    }
+  } finally {
+    addingId.value = null
+  }
+}
+
 onMounted(async () => {
   try {
     const res = await getFrontMenuApi(restaurantId)
     menuList.value = res.data || []
+    // 初始化每個餐點的加入數量為 1
+    menuList.value.forEach((item) => { qtyMap.value[item.id] = 1 })
   } catch (err) {
     await ElMessageBox.alert('尚未登入無法查看菜單', '提示', {
       confirmButtonText: '返回'
@@ -133,7 +184,18 @@ onMounted(async () => {
               </template>
               <img :src="imageSrc(item)" alt="餐點圖片" class="menu-card__img" />
               <template #footer>
-                <span class="menu-card__desc">{{ item.description || '無' }}</span>
+                <p class="menu-card__desc">{{ item.description || '無' }}</p>
+                <div class="mt-2 flex items-center gap-2">
+                  <el-input-number v-model="qtyMap[item.id]" :min="1" size="small" />
+                  <el-button
+                      type="primary"
+                      size="small"
+                      :loading="addingId === item.id"
+                      @click="handleAddToCart(item)"
+                  >
+                    加入購物車
+                  </el-button>
+                </div>
               </template>
             </el-card>
           </div>
