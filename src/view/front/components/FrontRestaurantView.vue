@@ -59,8 +59,8 @@ const showDialog = defineModel<boolean>({default: false})
 const goMenu = () => {
   router.push({
     name: 'frontRestaurantMenu',
-    params: { id: props.restaurant!.id },
-    query: { name: props.restaurant!.name }
+    params: {id: props.restaurant!.id},
+    query: {name: props.restaurant!.name}
   })
 }
 
@@ -142,7 +142,7 @@ const handleDeleteComment = async (comment: any) => {
         </div>
 
         <div class="body">
-          <p>營業時間 : {{ props.restaurant?.openingHours }} 小時</p>
+          <p>營業時長 : {{ props.restaurant?.openingHours }} 小時</p>
           <p>餐廳電話 : {{ props.restaurant?.tel }}</p>
           <p>餐廳地址 : {{ props.restaurant?.address }}</p>
 

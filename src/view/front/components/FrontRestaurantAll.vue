@@ -131,17 +131,19 @@ const API_BASE_URL = import.meta.env.VITE_API_URL
             alt="圖片"
             style="height: 350px; width: 100%; object-fit: cover;"
         />
-        <div class="grid grid-cols-[100px_1fr] gap-y-2 p-3">
-          <span class="text-left">電話：</span>
-          <span>{{ item.tel }}</span>
+        <div class="res-info grid grid-cols-[auto_1fr] gap-y-2 text-left p-3">
+          <span class="label">餐廳類型：</span>
+          <span class="ml-2">{{ item.category_name }}</span>
 
-          <span class="text-left">營業時長：</span>
-          <span>{{ item.openingHours }}</span>
+          <span class="label">電話：</span>
+          <span class="ml-2">{{ item.tel && item.tel !== '無' ? item.tel : '商家尚未提供電話' }}</span>
 
-          <span class="text-left">地址：</span>
-          <span>{{ item.address }}</span>
+          <span class="label">地址：</span>
+          <span class="ml-2">{{ item.address }}</span>
         </div>
-        <template #footer>{{ item.description || '無' }}</template>
+        <template #footer>
+          <p :class="{ 'res-des': !item.description }">{{ item.description || '業者暫未提供餐廳介紹' }}</p>
+        </template>
       </el-card>
     </div>
 
@@ -162,5 +164,16 @@ const API_BASE_URL = import.meta.env.VITE_API_URL
   &:hover {
     transform: translateY(-2px) scale(1.015);
   }
+}
+
+.res-info > .label {
+  width: 100%;
+  display: inline-block;
+  text-align-last: justify;
+}
+
+
+.res-des {
+  color: #666;
 }
 </style>
