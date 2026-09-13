@@ -6,8 +6,9 @@ import { computed, ref, watch } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import { Moon, ShoppingCart, Sunny } from "@element-plus/icons-vue"
 
-/* 導航 */
+/* 導航&路由 */
 const router = useRouter()
+const route = useRoute()
 const headerRoute = useRoute()
 
 /* 初始化 Store */
@@ -23,7 +24,7 @@ watch(() => userStore.userInfo, (info) => {
     cartStore.reset()
   }
 
-}, { immediate: true })
+}, {immediate: true})
 
 /* 是否顯示 Header */
 const showHeader = computed(() => {
@@ -32,11 +33,11 @@ const showHeader = computed(() => {
 
 const logOut = async () => {
   await userStore.logout()
-  await router.push({ name: 'logIn' })
+  await router.push({name: 'logIn'})
 }
 
 const backTOHome = () => {
-  router.push({ name: 'frontRestaurant' })
+  router.push({name: 'frontRestaurant'})
 }
 
 /* menu 選單 */
@@ -44,7 +45,7 @@ const activeIndex = ref('0')
 
 /* 前往使用者資訊頁面 */
 const toUserInfo = async () => {
-  await router.push({ name: 'userInfo' })
+  await router.push({name: 'userInfo'})
 }
 
 // 取得圖片前綴
@@ -63,37 +64,38 @@ const API_BASE_URL = import.meta.env.VITE_API_URL
         >
           <el-menu-item index="1" @click="backTOHome">
             <img style="height: 50px" src="https://i.urusai.cc/rDCqj.png"
-              alt="Element logo" />
+                 alt="Element logo" />
           </el-menu-item>
 
           <div class="flex items-center">
             <el-badge
-              :value="cartStore.count"
-              :hidden="cartStore.count === 0"
-              class="mr-3 self-center"
+                v-if="route.meta.showCart"
+                :value="cartStore.count"
+                :hidden="cartStore.count === 0"
+                class="mr-3 self-center"
             >
               <el-button
-                circle
-                :icon="ShoppingCart"
-                title="購物車"
-                @click="router.push({ name: 'frontCart' })"
+                  circle
+                  :icon="ShoppingCart"
+                  title="購物車"
+                  @click="router.push({ name: 'frontCart' })"
               />
             </el-badge>
 
             <el-button
-              circle
-              class="mr-3 self-center"
-              :icon="themeStore.mode === 'dark' ? Sunny : Moon"
-              :title="themeStore.mode === 'dark' ? '切換為淺色背景' : '切換為深色背景'"
-              @click="themeStore.toggleTheme()"
+                circle
+                class="mr-3 self-center"
+                :icon="themeStore.mode === 'dark' ? Sunny : Moon"
+                :title="themeStore.mode === 'dark' ? '切換為淺色背景' : '切換為深色背景'"
+                @click="themeStore.toggleTheme()"
             />
 
             <el-sub-menu index="2">
               <template #title>
                 <el-avatar
-                :size="32"
-                class="mr-2"
-                :src="userStore.userInfo?.image ? API_BASE_URL + userStore.userInfo.image
+                    :size="32"
+                    class="mr-2"
+                    :src="userStore.userInfo?.image ? API_BASE_URL + userStore.userInfo.image
                   : 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png'"
                 />
                 <span class="hidden sm:inline">{{ userStore.userInfo?.name }}</span>

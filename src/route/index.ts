@@ -26,6 +26,9 @@ const routes: RouteRecordRaw[] = [
     {
         path: '/user/info',
         name: 'userInfo',
+        meta: {
+            showCart: false
+        },
         component: () => import('@/view/user_info/UserInfo.vue')
     },
     {
@@ -41,6 +44,9 @@ const routes: RouteRecordRaw[] = [
     {
         path: '/front/restaurant',
         name: 'frontRestaurant',
+        meta: {
+            showCart: true
+        },
         component: () => import('@/view/front/FrontRestaurant.vue'),
         children: [
             {
@@ -75,6 +81,9 @@ const routes: RouteRecordRaw[] = [
     {
         path: '/end/restaurant',
         name: 'endRestaurant',
+        meta: {
+            showCart: false
+        },
         component: () => import('@/view/end/EndRestaurant.vue'),
         children: [
             {
@@ -97,6 +106,9 @@ const routes: RouteRecordRaw[] = [
     {
         path: '/end/user',
         name: 'endUserAdmin',
+        meta: {
+            showCart: false
+        },
         component: () => import('@/view/end/EndUserCrud.vue')
     },
     {
