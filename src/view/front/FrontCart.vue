@@ -193,6 +193,7 @@ onMounted(async () => {
             <el-button @click="handleClear">清空購物車</el-button>
             <el-button type="primary" disabled title="結帳功能開發中">結帳</el-button>
           </div>
+          <p class="notice">結帳功能目前開發中，敬請期待</p>
         </div>
       </template>
     </div>
@@ -312,5 +313,12 @@ onMounted(async () => {
   .cart-actions :deep(.el-button + .el-button) {
     margin-left: 0;
   }
+}
+
+.notice {
+  font-size: 14px;
+  color: #666;
+  text-align: right;
+  margin-top: 8px;
 }
 </style>

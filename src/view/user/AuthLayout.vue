@@ -3,9 +3,6 @@
 </script>
 
 <template>
-
-
-
   <div class="w-full min-h-screen flex flex-col bg-black">
 
     <!-- 主內容：lg 以上左右分欄，lg 以下上下堆疊 -->
@@ -35,7 +32,10 @@
       <p>感謝您撥空瀏覽。一般使用者可自行註冊帳號體驗前台</p>
       <p>如需查看後台管理功能，請使用管理員帳號登入：</p>
       <p class="font-mono">帳號 admin　密碼 123</p>
+      <p>一般使用者，可使用下方一般帳號登入或自行註冊帳號 ( 區分大小寫 )：</p>
+      <p class="font-mono">帳號 Ryan　密碼 123</p>
       <p class="text-white/50 text-xs">※ 此帳密僅供展示用途</p>
+
     </footer>
   </div>
 </template>
