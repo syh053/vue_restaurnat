@@ -36,11 +36,7 @@ const routes: RouteRecordRaw[] = [
         name: 'userInfoUpdate',
         component: () => import('@/view/user_info/UserInfoUpdate.vue')
     },
-    {
-        path: '/choose-page',
-        name: 'choosePage',
-        component: () => import('@/view/front/ChoosePage.vue')
-    },
+    
     {
         path: '/front/restaurant',
         name: 'frontRestaurant',
