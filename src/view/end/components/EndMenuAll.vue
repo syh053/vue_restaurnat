@@ -126,9 +126,18 @@ const onCrudUpdated = () => {
   showDialog.value = false
   tableRef.value?.refresh()
 }
+
+/* 讓父層（EndRestaurant.vue 的 Aside 選單）可以觸發新增餐點 */
+defineExpose({
+  openAddDialog: handleAdd
+})
 </script>
 
 <template>
+  <div class="w-full max-w-6xl mx-auto my-5 flex justify-end">
+    <el-button @click="handleBack">返回餐廳列表</el-button>
+  </div>
+
   <PageTable
       ref="pageTable"
       v-model="formInline"
@@ -138,13 +147,6 @@ const onCrudUpdated = () => {
       @selection-change="handleSelectionChange"
       @batch-delete="handleDelete"
   >
-    <template #toolbar>
-      <div class="flex gap-2">
-        <el-button type="primary" @click="handleAdd">新增餐點</el-button>
-        <el-button @click="handleBack">返回餐廳列表</el-button>
-      </div>
-    </template>
-
     <template #searchList>
       <el-form-item label="餐點名稱">
         <el-input v-model="formInline.name" placeholder="模糊查詢" clearable />
