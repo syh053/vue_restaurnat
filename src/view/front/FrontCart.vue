@@ -6,6 +6,8 @@ import { ElMessage, ElMessageBox } from "element-plus"
 import { useCartStore } from "@/stores/cart.ts"
 import { useUserStore } from "@/stores/user.ts"
 import type { CartItem } from "@/api/cart/type.ts"
+import { checkoutApi } from "@/api/order"
+import type { CheckoutResp } from "@/api/order/type.ts"
 
 /* 導航 */
 const router = useRouter()
@@ -16,6 +18,7 @@ const userStore = useUserStore()
 
 /* 狀態 */
 const loading = ref<boolean>(true)
+const checkingOut = ref<boolean>(false)
 
 /* 取得圖片前綴 */
 const API_BASE_URL = import.meta.env.VITE_API_URL
@@ -80,6 +83,31 @@ const handleClear = async () => {
     if (err !== 'cancel' && err !== 'close') {
       ElMessage.error(err?.response?.data?.message || '清空失敗')
     }
+  }
+}
+
+/* 結帳：建立訂單後導向後端付款頁（該頁會自動送出表單到綠界，非 JSON API） */
+const handleCheckout = async () => {
+  try {
+    await ElMessageBox.confirm(
+        `確定要送出訂單並前往付款嗎?總計 NT$ ${cartStore.total}`,
+        '結帳確認',
+        { confirmButtonText: '確定', cancelButtonText: '取消', type: 'warning' }
+    )
+  } catch {
+    return // 使用者取消
+  }
+
+  checkingOut.value = true
+  try {
+    const res = await checkoutApi()
+    const { order, pay_url }: CheckoutResp = res.data.data
+    // 供 /order/result 頁在使用者從綠界返回時查詢訂單狀態
+    sessionStorage.setItem('pendingOrderId', order.id)
+    window.location.href = `${API_BASE_URL}${pay_url}`
+  } catch (err: any) {
+    ElMessage.error(err?.response?.data?.message || '建立訂單失敗')
+    checkingOut.value = false
   }
 }
 
@@ -191,9 +219,8 @@ onMounted(async () => {
           <span class="cart-total">總計 NT$ {{ cartStore.total }}</span>
           <div class="cart-actions">
             <el-button @click="handleClear">清空購物車</el-button>
-            <el-button type="primary" disabled title="結帳功能開發中">結帳</el-button>
+            <el-button type="primary" :loading="checkingOut" @click="handleCheckout">結帳</el-button>
           </div>
-          <p class="notice">結帳功能目前開發中，敬請期待</p>
         </div>
       </template>
     </div>
@@ -225,7 +252,7 @@ onMounted(async () => {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 16px;
+  margin: 16px 0;
 }
 
 .cart-table-wrap {
@@ -313,12 +340,5 @@ onMounted(async () => {
   .cart-actions :deep(.el-button + .el-button) {
     margin-left: 0;
   }
-}
-
-.notice {
-  font-size: 14px;
-  color: #666;
-  text-align: right;
-  margin-top: 8px;
 }
 </style>

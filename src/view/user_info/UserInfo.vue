@@ -74,13 +74,22 @@ const displayImage = ref<string>('https://cube.elemecdn.com/0/88/03b0d39583f4820
 
 // 取得圖片前綴
 const API_BASE_URL = import.meta.env.VITE_API_URL
+
+/* 返回前台餐廳列表 */
+const handleBack = () => {
+  router.push({ name: 'frontRestaurantAll' })
+}
 </script>
 
 <template>
   <div class="user-container mx-auto mt-(--header-height)">
+    <div class="cart-titlebar">
+      <h2 class="text-2xl font-serif">個人資訊</h2>
+      <el-button @click="handleBack">返回</el-button>
+    </div>
+
     <div class="hero flex flex-col">
       <div class="flex gap-5">
-
         <div class="">
           <el-upload
               v-if="!loading"
@@ -136,6 +145,14 @@ const API_BASE_URL = import.meta.env.VITE_API_URL
 </template>
 
 <style scoped lang="scss">
+.cart-titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
 p {
   text-align: left;
   margin: 10px 0;

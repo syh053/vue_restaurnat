@@ -1,10 +1,9 @@
 <script setup lang="ts">
 
 import { computed } from "vue"
-import { useUserStore } from "@/stores/user.ts"
 
 import { Icon } from "@iconify/vue"
-import {useRoute, useRouter} from "vue-router"
+import { useRoute, useRouter } from "vue-router"
 import Aside from "@/components/Aside.vue"
 
 /* 導航 */
@@ -18,17 +17,9 @@ const activeMenuIndex = computed(() => {
   return '1'
 })
 
-/* 初始化 Store */
-const userStore = useUserStore()
-
 /* 切換至餐廳列表 */
 const handleToRestaurantList = async () => {
   await router.push({name: 'frontRestaurant'})
-}
-
-/* 切換至後台餐廳列表 */
-const handleToEndRestaurantList = async () => {
-  await router.push({name: 'endRestaurantAll'})
 }
 
 /* 切換至餐廳點餐列表 */
@@ -42,19 +33,15 @@ const handleToMenuOrderList = async () => {
     <Aside v-if="!route.path.includes('/front/restaurant/menu/')">
       <template #default>
         <el-menu class="custom-menu" :default-active="activeMenuIndex">
-          <el-menu-item class="justify-center" index="1" @click="handleToRestaurantList">
+          <el-menu-item v-if="String(route.name) === 'frontRestaurantMenuAll'" class="justify-center" index="1" @click="handleToRestaurantList">
             <Icon icon="material-symbols:restaurant" width="24" height="24" />
             前台餐廳列表
           </el-menu-item>
-          <el-menu-item class="justify-center" index="3" @click="handleToMenuOrderList">
+          <el-menu-item v-if="String(route.name) === 'frontRestaurantAll'" class="justify-center" index="3" @click="handleToMenuOrderList">
             <Icon icon="material-symbols:menu-book-outline" width="24" height="24" />
-            餐廳點餐
+            餐廳點餐列表
           </el-menu-item>
-          <el-menu-item v-if="userStore.userInfo?.is_admin" class="justify-center" index="2"
-                        @click="handleToEndRestaurantList">
-            <Icon icon="hugeicons:manager" width="24" height="24" />
-            後台餐廳列表
-          </el-menu-item>
+
         </el-menu>
       </template>
     </Aside>

@@ -5,6 +5,7 @@ import { useCartStore } from "@/stores/cart.ts"
 import { computed, ref, watch } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import { Moon, ShoppingCart, Sunny } from "@element-plus/icons-vue"
+import { Icon } from "@iconify/vue"
 
 /* 導航&路由 */
 const router = useRouter()
@@ -48,6 +49,16 @@ const toUserInfo = async () => {
   await router.push({name: 'userInfo'})
 }
 
+/* 切換至後台餐廳列表 */
+const handleToEndRestaurantList = async () => {
+  await router.push({name: 'endRestaurantAll'})
+}
+
+/* 切換至前台餐廳列表 */
+const handleToRestaurantList = async () => {
+  await router.push({name: 'frontRestaurant'})
+}
+
 // 取得圖片前綴
 const API_BASE_URL = import.meta.env.VITE_API_URL
 </script>
@@ -62,10 +73,23 @@ const API_BASE_URL = import.meta.env.VITE_API_URL
             :ellipsis="false"
             mode="horizontal"
         >
-          <el-menu-item index="1" @click="backTOHome">
-            <img style="height: 50px" src="https://i.urusai.cc/rDCqj.png"
-                 alt="Element logo" />
-          </el-menu-item>
+          <div class="flex left-header">
+            <el-menu-item index="1" @click="backTOHome">
+              <img style="height: 50px" src="https://i.urusai.cc/rDCqj.png"
+                   alt="Element logo" />
+            </el-menu-item>
+
+            <el-menu-item v-if="userStore.userInfo?.is_admin && !String(route.name).includes('end')" class="justify-center" index="2"
+                          @click="handleToEndRestaurantList">
+              <Icon class="me-1 p-0" icon="ant-design:dashboard-outlined" width="24" height="24" />
+              後台儀錶板
+            </el-menu-item>
+
+            <el-menu-item v-if="String(route.name).includes('end')" class="justify-center" index="1" @click="handleToRestaurantList">
+              <Icon icon="material-symbols:restaurant" width="24" height="24" />
+              前台餐廳列表
+            </el-menu-item>
+          </div>
 
           <div class="flex items-center">
             <el-badge
@@ -101,9 +125,17 @@ const API_BASE_URL = import.meta.env.VITE_API_URL
                 <span class="hidden sm:inline">{{ userStore.userInfo?.name }}</span>
               </template>
               <el-menu-item index="2-1" @click="toUserInfo">
+                <Icon class="me-1" icon="ant-design:user-outlined" width="24" height="24" />
                 使用者資訊
               </el-menu-item>
-              <el-menu-item index="2-2" @click="logOut">
+
+              <el-menu-item index="2-2" @click="router.push({  name: 'frontCart' })">
+                <Icon class="me-1" icon="akar-icons:cart" width="24" height="24" />
+                購物車
+              </el-menu-item>
+
+              <el-menu-item index="2-." @click="logOut">
+                <Icon class="me-1" icon="circum:logout" width="24" height="24" />
                 登出
               </el-menu-item>
             </el-sub-menu>
@@ -117,4 +149,6 @@ const API_BASE_URL = import.meta.env.VITE_API_URL
 </template>
 
 
-<style scoped></style>
+<style scoped>
+
+</style>
