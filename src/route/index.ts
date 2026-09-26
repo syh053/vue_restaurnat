@@ -36,7 +36,14 @@ const routes: RouteRecordRaw[] = [
         name: 'userInfoUpdate',
         component: () => import('@/view/user_info/UserInfoUpdate.vue')
     },
-    
+    {
+        path: '/choose-page',
+        name: 'choosePage',
+        meta: {
+            showCart: false
+        },
+        component: () => import('@/view/front/ChoosePage.vue')
+    },
     {
         path: '/front/restaurant',
         name: 'frontRestaurant',

@@ -37,7 +37,7 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
 
     await userStore.login(form)
 
-    await router.push({ name: "frontRestaurantAll" })
+    await router.push({ name: "choosePage" })
   } catch (fields) {
     console.log("驗證失敗", fields)
   }

@@ -79,33 +79,21 @@ const API_BASE_URL = import.meta.env.VITE_API_URL
                    alt="Element logo" />
             </el-menu-item>
 
-            <el-menu-item v-if="userStore.userInfo?.is_admin && !String(route.name).includes('end')" class="justify-center" index="2"
+            <el-menu-item v-if="userStore.userInfo?.is_admin && !String(route.name).includes('end')"
+                          class="justify-center" index="2"
                           @click="handleToEndRestaurantList">
               <Icon class="me-1 p-0" icon="ant-design:dashboard-outlined" width="24" height="24" />
               後台儀錶板
             </el-menu-item>
 
-            <el-menu-item v-if="String(route.name).includes('end')" class="justify-center" index="1" @click="handleToRestaurantList">
+            <el-menu-item v-if="String(route.name).includes('end')" class="justify-center" index="1"
+                          @click="handleToRestaurantList">
               <Icon icon="material-symbols:restaurant" width="24" height="24" />
               前台餐廳列表
             </el-menu-item>
           </div>
 
           <div class="flex items-center">
-            <el-badge
-                v-if="route.meta.showCart"
-                :value="cartStore.count"
-                :hidden="cartStore.count === 0"
-                class="mr-3 self-center"
-            >
-              <el-button
-                  circle
-                  :icon="ShoppingCart"
-                  title="購物車"
-                  @click="router.push({ name: 'frontCart' })"
-              />
-            </el-badge>
-
             <el-button
                 circle
                 class="mr-3 self-center"
@@ -131,7 +119,16 @@ const API_BASE_URL = import.meta.env.VITE_API_URL
 
               <el-menu-item index="2-2" @click="router.push({  name: 'frontCart' })">
                 <Icon class="me-1" icon="akar-icons:cart" width="24" height="24" />
+
                 購物車
+
+                <el-badge
+                    v-if="route.meta.showCart"
+                    :value="cartStore.count"
+                    :hidden="cartStore.count === 0"
+                    class="ml-3 pb-1"
+                >
+                </el-badge>
               </el-menu-item>
 
               <el-menu-item index="2-." @click="logOut">
