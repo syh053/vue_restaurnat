@@ -4,7 +4,7 @@ import { useThemeStore } from "@/stores/theme.ts"
 import { useCartStore } from "@/stores/cart.ts"
 import { computed, ref, watch } from "vue"
 import { useRoute, useRouter } from "vue-router"
-import { Moon, ShoppingCart, Sunny } from "@element-plus/icons-vue"
+import { Moon, Sunny } from "@element-plus/icons-vue"
 import { Icon } from "@iconify/vue"
 
 /* 導航&路由 */
