@@ -6,6 +6,7 @@ import { computed, ref, watch } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import { Moon, Sunny } from "@element-plus/icons-vue"
 import { Icon } from "@iconify/vue"
+import { Role } from "@/enums/user_access.ts"
 
 /* 導航&路由 */
 const router = useRouter()
@@ -79,7 +80,7 @@ const API_BASE_URL = import.meta.env.VITE_API_URL
                    alt="Element logo" />
             </el-menu-item>
 
-            <el-menu-item v-if="userStore.userInfo?.is_admin && !String(route.name).includes('end')"
+            <el-menu-item v-if="(userStore.userInfo?.role === Role.SUPER_ADMIN || userStore.userInfo?.role === Role.OWNER) && !String(route.name).includes('end')"
                           class="justify-center" index="2"
                           @click="handleToEndRestaurantList">
               <Icon class="me-1 p-0" icon="ant-design:dashboard-outlined" width="24" height="24" />
@@ -129,6 +130,11 @@ const API_BASE_URL = import.meta.env.VITE_API_URL
                     class="ml-3 pb-1"
                 >
                 </el-badge>
+              </el-menu-item>
+
+              <el-menu-item index="2-3" @click="router.push({ name: 'orderList' })">
+                <Icon class="me-1" icon="mdi:receipt-text-outline" width="24" height="24" />
+                我的訂單
               </el-menu-item>
 
               <el-menu-item index="2-." @click="logOut">

@@ -9,6 +9,7 @@ import type { restaurantCommentAdd, restaurantCommentDelete } from "@/api/commen
 import { useUserStore } from "@/stores/user.ts"
 import { ElMessageBox } from "element-plus"
 import { useRouter } from "vue-router"
+import { Role } from "@/enums/user_access.ts"
 
 
 /* 設定時間區域 */
@@ -158,7 +159,7 @@ const handleDeleteComment = async (comment: any) => {
             <p class="comment-block">
               <a><strong>{{ comment.user_name }}</strong></a>
               <span>{{ comment.comment }}</span>
-              <el-button class="delete-btn" v-if="userStore.userInfo?.is_admin" type="danger" link
+              <el-button class="delete-btn" v-if="userStore.userInfo?.role === Role.SUPER_ADMIN" type="danger" link
                          @click="handleDeleteComment(comment)">刪除
               </el-button>
             </p>

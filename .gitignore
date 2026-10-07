@@ -14,6 +14,7 @@ dist-ssr
 
 # 不要提交 CLAUDE.md
 CLAUDE.md
+TECH_NOTES.md
 
 # 不要提交 Vue 專案中工具自動產生的 TypeScript 型別宣告檔
 components.d.ts

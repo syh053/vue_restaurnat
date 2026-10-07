@@ -34,7 +34,7 @@ const submitForm = async () => {
 
       <label class="mx-auto">權限 :</label>
       <input type="text" class="input border w-full text-xl"
-             :value="userStore.userInfo?.is_admin ? UserRole.ADMIN : UserRole.USER" disabled/>
+             :value="UserRole[userStore.userInfo?.role ?? 'user']" disabled/>
 
 
       <button class="btn col-start-2 justify-self-end me-10" @click="submitForm">編輯</button>

@@ -4,6 +4,12 @@ import { Icon } from '@iconify/vue'
 import { computed, ref, useTemplateRef } from "vue"
 import EndRestaurantCrud from "@/view/end/components/EndRestaurantCRUD.vue"
 import Aside from "@/components/Aside.vue"
+import { useUserStore } from "@/stores/user.ts"
+import { Role } from "@/enums/user_access.ts"
+
+const userStore = useUserStore()
+const isSuperAdmin = computed(() => userStore.userInfo?.role === Role.SUPER_ADMIN)
+const isOwner = computed(() => userStore.userInfo?.role === Role.OWNER)
 
 
 /* 導航 */
@@ -22,6 +28,11 @@ const isMenuPage = computed(() => route.name === 'endRestaurantMenu')
 /* 路由切換 */
 const handleToRestaurantList = async () => {
   await router.push({name: 'endUserAdmin'})
+}
+
+/* 切換至營業額（僅業者） */
+const handleToRevenue = async () => {
+  await router.push({name: 'endRevenue'})
 }
 
 /* 菜單管理頁時新增餐點，其餘頁面新增餐廳 */
@@ -54,9 +65,13 @@ const updatedData = async () => {
     <Aside>
       <template #default>
         <el-menu class="custom-menu">
-          <el-menu-item class="justify-center" index="1" @click="handleToRestaurantList">
+          <el-menu-item v-if="isSuperAdmin" class="justify-center" index="1" @click="handleToRestaurantList">
             <Icon icon="subway:admin" width="24" height="24" />
             後台使用者
+          </el-menu-item>
+          <el-menu-item v-if="isOwner" class="justify-center" index="3" @click="handleToRevenue">
+            <Icon icon="mdi:chart-line" width="24" height="24" />
+            營業額
           </el-menu-item>
           <el-menu-item class="justify-center" index="2" @click="handleToRestaurantAdd">
             <Icon icon="material-symbols:add" width="24" height="24" />

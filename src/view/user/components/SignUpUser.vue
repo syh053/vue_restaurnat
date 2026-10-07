@@ -22,6 +22,7 @@ const form = reactive<UserPost>({
   email: '',
   password: '',
   confirm_password: '',
+  role: 'user',
 })
 
 const ruleFormRef = ref<FormInstance>()
@@ -175,6 +176,13 @@ const jumpSignIn = async () => {
           />
           <label class="floating-label" :class="{ 'is-float': confirmPasswordFocused || form.confirm_password }">確認密碼</label>
         </div>
+      </el-form-item>
+
+      <el-form-item prop="role">
+        <el-radio-group v-model="form.role">
+          <el-radio value="user">一般使用者</el-radio>
+          <el-radio value="owner">業者</el-radio>
+        </el-radio-group>
       </el-form-item>
 
       <el-form-item>

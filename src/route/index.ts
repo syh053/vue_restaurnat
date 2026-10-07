@@ -82,6 +82,14 @@ const routes: RouteRecordRaw[] = [
         component: () => import('@/view/front/FrontCart.vue')
     },
     {
+        path: '/order/list',
+        name: 'orderList',
+        meta: {
+            showCart: false
+        },
+        component: () => import('@/view/order/OrderList.vue')
+    },
+    {
         path: '/order/result',
         name: 'orderResult',
         meta: {
@@ -106,6 +114,11 @@ const routes: RouteRecordRaw[] = [
                 path: 'add',
                 name: 'endRestaurantAdd',
                 component: () => import('@/view/end/components/EndRestaurantCRUD.vue')
+            },
+            {
+                path: 'revenue',
+                name: 'endRevenue',
+                component: () => import('@/view/end/components/EndRevenue.vue')
             },
             {
                 path: 'menu/:restaurantId',

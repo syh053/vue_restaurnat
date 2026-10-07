@@ -5,7 +5,7 @@ import { useRouter } from "vue-router"
 import { deleteUserApi, getUserApi, updateUserAccessApi } from "@/api/end_user"
 
 import { reactive, ref, useTemplateRef } from "vue"
-import { type UpdateUser, type User, type UserSearch, userStatusOptions } from "@/api/end_user/type.ts"
+import { type UpdateUser, type User, type UserSearch, userRoleOptions } from "@/api/end_user/type.ts"
 import { ElMessageBox } from "element-plus"
 import type { EndRestaurantList } from "@/api/end_restaurant/type.ts"
 import Aside from "@/components/Aside.vue"
@@ -22,15 +22,22 @@ const handleToRestaurantList = async () => {
 const formInline = reactive<UserSearch>({
   name: '',
   email: '',
-  is_admin: null,
+  role: null,
   current_page: 1,
   page_size: 10,
 })
 
-/* 編輯使用者權限 */
-const handleChangeAdmin = async (row: User) => {
-  const updated_data: UpdateUser = {id: row.id, is_admin: row.is_admin}
-  await updateUserAccessApi(updated_data)
+/* 編輯使用者角色 */
+const oldRole = ref<User['role']>('user')
+
+const handleChangeRole = async (row: User, oldRole: User['role']) => {
+  const updated_data: UpdateUser = {id: row.id, role: row.role}
+  try {
+    await updateUserAccessApi(updated_data)
+  } catch {
+    // 更新失敗（例如不可變更自己的角色）時還原畫面上的選項
+    row.role = oldRole
+  }
 }
 
 /* 宣告右鍵功能配置陣列 */
@@ -120,11 +127,11 @@ const menuConfigs = ref<ContextMenuOption[]>([
           <el-form-item label=信箱>
             <el-input v-model="formInline.email" placeholder="模糊查詢" clearable />
           </el-form-item>
-          <el-form-item label="類別 :" style="width: 150px">
-            <el-select v-model="formInline.is_admin" placeholder="請選擇" clearable>
+          <el-form-item label="角色 :" style="width: 150px">
+            <el-select v-model="formInline.role" placeholder="請選擇" clearable>
               <el-option
-                  v-for="item in userStatusOptions"
-                  :key="String(item.value)"
+                  v-for="item in userRoleOptions"
+                  :key="item.value"
                   :label="item.label"
                   :value="item.value"
               />
@@ -137,14 +144,14 @@ const menuConfigs = ref<ContextMenuOption[]>([
           <el-table-column type="selection" width="55" />
           <el-table-column prop="name" label="名稱" width="350" />
           <el-table-column prop="email" label="信箱" width="450" />
-          <el-table-column prop="is_admin" label="是否為管理員">
+          <el-table-column prop="role" label="角色">
             <template #default="{row}">
-              <el-switch
-                  v-model="row.is_admin"
-                  @change="handleChangeAdmin((row))"
-                  class="ml-2"
-                  style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949"
-              />
+              <el-select v-model="row.role" style="width: 160px"
+                         @focus="oldRole = row.role"
+                         @change="handleChangeRole(row, oldRole)">
+                <el-option v-for="item in userRoleOptions" :key="item.value"
+                           :label="item.label" :value="item.value" />
+              </el-select>
             </template>
           </el-table-column>
         </template>

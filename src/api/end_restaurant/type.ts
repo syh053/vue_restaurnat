@@ -8,6 +8,7 @@ export interface EndRestaurantList {
     image?: string
     category_id?: string | null
     category_name?: string | null
+    owner_id?: string | null
 }
 
 export interface EndRestaurantSearch {
